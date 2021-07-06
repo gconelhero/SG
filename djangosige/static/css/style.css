@@ -257,7 +257,7 @@
 .overlay-open .sidebar#barralateral {
   margin-left: 0;
   z-index: 99999999; }
-
+  
 .sidebar {
   -moz-transition: all 0.5s;
   -o-transition: all 0.5s;
@@ -358,7 +358,8 @@
     overflow-y: auto;
     height: 90vh;
     overflow-y: scroll;
-    height: 450px; }
+    height: 100%;
+    /*height: 450px;*/ }
     .sidebar .menu .list {
       list-style: none;
       padding-left: 0; }

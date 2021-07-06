@@ -365,7 +365,7 @@ class GerarNotaFiscalSaidaView(CustomView):
 
         return redirect(reverse_lazy('fiscal:editarnotafiscalsaidaview', kwargs={'pk': nova_nota.id}))
 
-
+#INSERIR VALIDADOR DE ARQUIVOS
 class ConfiguracaoNotaFiscalView(FormValidationMessageMixin, CustomTemplateView):
     template_name = 'fiscal/nota_fiscal/nota_fiscal_config.html'
     success_url = reverse_lazy('fiscal:configuracaonotafiscal')

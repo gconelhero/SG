@@ -1,16 +1,16 @@
-# SISTEMA DE GESTÃO
+# DjangoSIGE [![Build Status](https://travis-ci.org/thiagopena/djangoSIGE.svg?branch=master)](https://travis-ci.org/thiagopena/djangoSIGE)
 
-Sistema Integrado de Gestão.
+Sistema Integrado de Gestão Empresarial baseado em Django
 
 Projeto independente open-source desenvolvido em Python 3 no Windows, testado no GNU/Linux e Windows.
 
 
 ## Dependências
 
-- [Python](https://www.python.org/downloads/) - Versão 3.5+ 
+- [Python](https://www.python.org/downloads/) - Versão 3.5+
 - [django](http://www.djangoproject.com) == 3.1.7
-- [geraldo](https://github.com/thiagopena/geraldo) - Geração de PDF para pedidos de venda/compra *OBS: Usar versões do Python abaixo da 3.8x
-- [PySIGNFe](https://github.com/thiagopena/PySIGNFe) (Opcional) - Necessário para a geração de NF-e, NFC-e, comunicação com SEFAZ, geração do DANFE, etc. *OBS: Usar versões do Python abaixo da 3.8
+- [geraldo](https://github.com/thiagopena/geraldo) - Geração de PDF para pedidos de venda/compra
+- [PySIGNFe](https://github.com/thiagopena/PySIGNFe) (Opcional) - Necessário para a geração de NF-e, NFC-e, comunicação com SEFAZ, geração do DANFE, etc.
 - [apache2](https://www.apache.org/) (Opcional)
 - [mod_wsgi](https://modwsgi.readthedocs.io/en/develop/) (Opcional)
 
@@ -29,7 +29,7 @@ sudo apt update
 pip install -r requirements.txt
 ```
 
-2. Edite o conteúdo do arquivo **SG/configs/configs.py**
+2. Edite o conteúdo do arquivo **djangosige/configs/configs.py**
 
 3. Gere um `.env` local
 
@@ -82,6 +82,6 @@ python manage.py runserver
 
 ## Ajuda
 
-Para relatar bugs ou fazer perguntas utilize o [Issues](https://github.com/CTECHSUL/SG/issues).
+Para relatar bugs ou fazer perguntas utilize o [Issues](https://github.com/thiagopena/djangoSIGE/issues) ou via email thiagopena01@gmail.com
 
 Como este é um projeto em desenvolvimento, qualquer feedback será bem-vindo.
