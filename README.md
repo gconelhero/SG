@@ -1,4 +1,4 @@
-# DjangoSIGE [![Build Status](https://travis-ci.org/thiagopena/djangoSIGE.svg?branch=master)](https://travis-ci.org/thiagopena/djangoSIGE)
+# SISTEMA DE GESTÃO
 
 Sistema Integrado de Gestão Empresarial baseado em Django
 
@@ -29,7 +29,7 @@ sudo apt update
 pip install -r requirements.txt
 ```
 
-2. Edite o conteúdo do arquivo **djangosige/configs/configs.py**
+2. Edite o conteúdo do arquivo **SG/configs/configs.py**
 
 3. Gere um `.env` local
 
@@ -82,6 +82,6 @@ python manage.py runserver
 
 ## Ajuda
 
-Para relatar bugs ou fazer perguntas utilize o [Issues](https://github.com/thiagopena/djangoSIGE/issues) ou via email thiagopena01@gmail.com
+Para relatar bugs ou fazer perguntas utilize o [Issues](https://github.com/CTECHSUL/SG/issues).
 
 Como este é um projeto em desenvolvimento, qualquer feedback será bem-vindo.
