@@ -76,9 +76,3 @@ python manage.py runserver
 - [jQuery-Mask-Plugin](https://igorescobar.github.io/jQuery-Mask-Plugin/)
 - [DataTables](https://datatables.net/)
 - [JQuery multiselect](http://loudev.com/)
-
-## Ajuda
-
-Para relatar bugs ou fazer perguntas utilize o [Issues](https://github.com/thiagopena/djangoSIGE/issues) ou via email thiagopena01@gmail.com
-
-Como este é um projeto em desenvolvimento, qualquer feedback será bem-vindo.
