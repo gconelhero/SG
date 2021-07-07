@@ -257,7 +257,11 @@
 .overlay-open .sidebar#barralateral {
   margin-left: 0;
   z-index: 99999999; }
-  
+.menu {
+  height: 100%;
+  max-height: calc(100vh - 9rem);
+  overflow-y: auto;
+}
 .sidebar {
   -moz-transition: all 0.5s;
   -o-transition: all 0.5s;
@@ -268,7 +272,9 @@
   width: 300px;
   overflow: hidden;
   display: inline-block;
-  height: calc(100vh - 70px);
+  height: 100%;
+  max-height: calc(102vh - 8rem);
+  overflow-y: auto;
   position: fixed;
   top: 70px;
   left: 0;
@@ -278,7 +284,7 @@
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
   z-index: 11 !important; }
   .sidebar .legal {
-    position: absolute;
+    position: sticky    ;
     bottom: 0;
     width: 100%;
     border-top: 1px solid #eee;

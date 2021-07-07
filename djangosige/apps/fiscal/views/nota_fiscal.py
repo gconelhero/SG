@@ -23,6 +23,7 @@ except ImportError:
 from decimal import Decimal
 from datetime import datetime
 
+import magic
 
 class NotaFiscalViewMixin(object):
 

@@ -28,6 +28,7 @@ class AdicionarEmpresaView(AdicionarPessoaView):
     def post(self, request, *args, **kwargs):
         form = EmpresaForm(request.POST, request.FILES,
                            prefix='empresa_form', request=request)
+
         return super(AdicionarEmpresaView, self).post(request, form, *args, **kwargs)
 
 
