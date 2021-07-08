@@ -417,7 +417,7 @@ class ConfiguracaoNotaFiscalView(FormValidationMessageMixin, CustomTemplateView)
         
         
     def form_invalid(self, form):
-        return self.render_to_response(self.get_context_data(form=form, object=self.object, teste=teste))
+        return self.render_to_response(self.get_context_data(form=form, object=self.object))
 
 
 class ValidarNotaView(CustomView):
