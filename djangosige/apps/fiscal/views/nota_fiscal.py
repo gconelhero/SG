@@ -397,15 +397,27 @@ class ConfiguracaoNotaFiscalView(FormValidationMessageMixin, CustomTemplateView)
         form = ConfiguracaoNotaFiscalForm(
             request.POST, request.FILES, instance=self.object)
 
+        try:
+            certificado = request.FILES['arquivo_certificado_a1'].read(256*256) #Bloco de 65536 poderia ser read(65536)
+            validator = magic.from_buffer(certificado)
+            if validator == 'PEM certificate':
+                pass
+            else:
+                return self.form_invalid(form)
+
+        except Exception as erro:
+            print("CAMPO CERTIFIFCADO DIGITAL VAZIO." ,erro)
+            pass
+
         if form.is_valid():
             self.object = form.save(commit=False)
             self.object.save()
             return self.form_valid(form)
 
-        return self.form_invalid(form)
-
+        
+        
     def form_invalid(self, form):
-        return self.render_to_response(self.get_context_data(form=form, object=self.object,))
+        return self.render_to_response(self.get_context_data(form=form, object=self.object, teste=teste))
 
 
 class ValidarNotaView(CustomView):
