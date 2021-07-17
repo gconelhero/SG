@@ -5,6 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.forms import inlineformset_factory
 
 from djangosige.apps.vendas.models import OrcamentoVenda, PedidoVenda, ItensVenda, Venda
+from djangosige.apps.fiscal.models import GrupoFiscal
+from djangosige.apps.cadastro.models import Produto
 
 
 class VendaForm(forms.ModelForm):
@@ -14,7 +16,7 @@ class VendaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(VendaForm, self).__init__(*args, **kwargs)
         self.fields['status'].initial = '0'
-
+        
         self.fields['total_sem_imposto'].localize = True
         self.fields['total_sem_imposto'].initial = '0.00'
 
@@ -45,7 +47,7 @@ class VendaForm(forms.ModelForm):
             'cliente': forms.Select(attrs={'class': 'form-control'}),
             'ind_final': forms. CheckboxInput(attrs={'class': 'form-control'}),
             'transportadora': forms.Select(attrs={'class': 'form-control'}),
-            'mod_frete': forms.Select(attrs={'class': 'form-control'}),
+            'mod_frete': forms.Select(attrs={'class': 'form-control'}),'produto': forms.Select(attrs={'class': 'form-control select-produto'}),
             'local_orig': forms.Select(attrs={'class': 'form-control'}),
             'movimentar_estoque': forms.CheckboxInput(attrs={'class': 'form-control'}),
             'veiculo': forms.Select(attrs={'class': 'form-control'}),
@@ -153,6 +155,9 @@ class ItensVendaForm(forms.ModelForm):
         self.fields['desconto'].localize = True
         self.fields['subtotal'].localize = True
 
+        self.fields['grupo_fiscal_nota'].localize = True
+        #self.fields['grupo_fiscal_nota'].initial = 1
+
         self.fields['total_sem_desconto'].localize = True
         self.fields['total_impostos'].localize = True
         self.fields['total_com_impostos'].localize = True
@@ -177,13 +182,14 @@ class ItensVendaForm(forms.ModelForm):
 
     class Meta:
         model = ItensVenda
-        fields = ('produto', 'quantidade', 'valor_unit', 'tipo_desconto', 'desconto', 'valor_rateio_frete', 'valor_rateio_despesas', 'valor_rateio_seguro',
+        fields = ('produto', 'grupo_fiscal_nota', 'quantidade', 'valor_unit', 'tipo_desconto', 'desconto', 'valor_rateio_frete', 'valor_rateio_despesas', 'valor_rateio_seguro',
                   'vbc_icms', 'vbc_icms_st', 'vbc_ipi',
                   'subtotal', 'vicms', 'vicms_st', 'vipi', 'p_icms', 'p_ipi', 'p_icmsst', 'vfcp', 'vicmsufdest', 'vicmsufremet',
                   'ipi_incluido_preco', 'icms_incluido_preco', 'icmsst_incluido_preco', 'incluir_bc_icms', 'incluir_bc_icmsst', 'auto_calcular_impostos',)
 
         widgets = {
             'produto': forms.Select(attrs={'class': 'form-control select-produto'}),
+            'grupo_fiscal_nota': forms.Select(attrs={'class': 'form-control select-grupo_fiscal_nota'}),
             'quantidade': forms.TextInput(attrs={'class': 'form-control decimal-mask'}),
             'valor_unit': forms.TextInput(attrs={'class': 'form-control decimal-mask'}),
             'subtotal': forms.TextInput(attrs={'class': 'form-control decimal-mask', 'readonly': True}),
@@ -218,6 +224,7 @@ class ItensVendaForm(forms.ModelForm):
         }
         labels = {
             'produto': _('Produto'),
+            'grupo_fiscal_nota': _('Grupo Fiscal'),
             'quantidade': _('Quantidade'),
             'valor_unit': _('Vl. Unit.'),
             'subtotal': _('Subtotal'),
@@ -235,7 +242,6 @@ class ItensVendaForm(forms.ModelForm):
         if self.cleaned_data.get('produto', None) is None:
             self.cleaned_data = {}
         return valid
-
 
 ItensVendaFormSet = inlineformset_factory(
     Venda, ItensVenda, form=ItensVendaForm, extra=1, can_delete=True)

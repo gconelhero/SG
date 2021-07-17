@@ -968,11 +968,12 @@ $.Admin.vendaForm = {
         var transportadora_input = $('#id_transportadora')
         var cond_pag_input = $('#id_cond_pagamento');
         var produtos_input = $('select.select-produto');
+        var grupo_fiscal_input = $('select.select-grupo_fiscal_nota');
 
         $.Admin.maskInput.maskVenda();
         //Preencher campos edit view
         $('#id_valor_total_display').text($('#id_valor_total').val());
-
+        //
         $('.formset[id^=produtos_form-]').each(function(){
             var form_number = $(this).prop('id').match(/\d/)[0];
             if($(this).find('select[id$=-produto]').val().length === 0){
@@ -1028,12 +1029,15 @@ $.Admin.vendaForm = {
 
         cond_pag_input.trigger('change', [true]);
 
+
         produtos_input.on('change', function(event, initial){
             var form_number = $(this).prop('id').match(/\d/)[0];
             if($(this).val()){
                 var postData = {
                     'produtoId': $(this).val(),
                 }
+                postData['grupoFiscalId'] = grupo_fiscal_input.val()
+
                 $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
             }else{
                 _this.handleProdutoInfo(null, form_number, initial);
@@ -1041,6 +1045,60 @@ $.Admin.vendaForm = {
         });
 
         produtos_input.trigger('change', [true]);
+        
+        // GRupo fiscal
+        grupo_fiscal_input.on('change', function(event, initial){
+            var form_number = $(this).prop('id').match(/\d/)[0];
+            if($(this).val()){
+                
+                var postData = {
+                    'grupoFiscalId': $(this).val(),
+                }
+                postData['produtoId'] = produtos_input.val()
+
+                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
+            }else{
+                _this.handleProdutoInfo(null, form_number, initial);
+            }
+        });
+
+        grupo_fiscal_input.trigger('change', [true]);
+
+/*
+
+        produtos_input.on('change', function(event, initial){
+            var form_number = $(this).prop('id').match(/\d/)[0];
+            if($(this).val()){
+                var postData = {
+                    'produtoId': $(this).val(),
+                }
+
+                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
+            }else{
+                _this.handleProdutoInfo(null, form_number, initial);
+            }
+        });
+
+        produtos_input.trigger('change', [true]);
+        
+        // GRupo fiscal
+        grupo_fiscal_input.on('change', function(event, initial){
+            var form_number = $(this).prop('id').match(/\d/)[0];
+            if($(this).val()){
+                var postData = {
+                    'grupoFiscalId': $(this).val(),
+
+                }
+                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
+            }else{
+                _this.handleProdutoInfo(null, form_number, initial);
+            }
+        });
+
+        grupo_fiscal_input.trigger('change', [true]);
+
+*/
+
 
         /*  Eventos  */
 
@@ -1978,6 +2036,7 @@ $.Admin.compraForm = {
             if($(this).val()){
                 var postData = {
                     'produtoId': $(this).val(),
+
                 }
                 $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
             }else{
@@ -1986,6 +2045,22 @@ $.Admin.compraForm = {
         });
 
         produtos_input.trigger('change', [true]);
+
+        //Grupo Fiscal
+        grupo_fiscal_input.on('change', function(event, initial){
+            var form_number = $(this).prop('id').match(/\d/)[0];
+            if($(this).val()){
+                var postData = {
+                    'grupoFiscalId': $(this).val(),
+
+                }
+                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
+            }else{
+                _this.handleProdutoInfo(null, form_number, initial);
+            }
+        });
+
+        grupo_fiscal_input.trigger('change', [true]);
 
         /*  Eventos  */
 
@@ -2411,7 +2486,7 @@ $.Admin.movimentoEstoqueForm = {
         var _this = this;
         var produtos_input = $('select.select-produto');
         var transacao_input = $('select[id^=id_pedido_]');
-
+        
         //Preencher campos iniciais dos itens com 0,00
         $('.formset[id^=itens_form-]').each(function(){
             var form_number = $(this).prop('id').match(/\d/)[0];
@@ -2580,6 +2655,7 @@ $.Admin.movimentoEstoqueForm = {
                         }
 
                         newForm.find('select[id$=-produto]').val(data[i].fields['produto_id']);
+                        newForm.find('select[id$=-grupo_fiscal_nota]').val(data[i].fields['grupo_fiscal_nota']);
                         newForm.find('input[id$=-quantidade]').val(data[i].fields['quantidade']);
                         newForm.find('input[id$=-valor_unit]').val(data[i].fields['valor_unit']);
                         newForm.find('input[id$=-subtotal]').val(data[i].fields['vprod']);
@@ -3168,11 +3244,12 @@ $.Admin.ajaxRequest = {
         $.ajax({
             url: req_url,
             type: "POST",
-            data: postData,
+            data: postData, 
             dataType: "json",
             success: function(data) {
                 handler(data, handler_arg, handler_arg2);
             },
+            
         });
     }
 }

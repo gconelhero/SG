@@ -15,7 +15,6 @@ class InfoVenda(View):
         itens_venda = venda.itens_venda.all()
         pagamentos = venda.parcela_pagamento.all()
         data = []
-
         pedido_dict = {}
         pedido_dict['model'] = 'vendas.pedidovenda'
         pedido_dict['pk'] = venda.id

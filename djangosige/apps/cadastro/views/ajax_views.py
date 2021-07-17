@@ -5,8 +5,10 @@ from django.http import HttpResponse
 from django.core import serializers
 
 from djangosige.apps.cadastro.models import Pessoa, Cliente, Fornecedor, Transportadora, Produto
-from djangosige.apps.fiscal.models import ICMS, ICMSSN, IPI, ICMSUFDest
+from djangosige.apps.fiscal.models import ICMS, ICMSSN, IPI, ICMSUFDest, GrupoFiscal
 
+# SG CS
+from djangosige.apps.vendas.models import ItensVenda
 
 class InfoCliente(View):
 
@@ -91,21 +93,24 @@ class InfoProduto(View):
 
     def post(self, request, *args, **kwargs):
         obj_list = []
-        pro = Produto.objects.get(pk=request.POST['produtoId'])
-        obj_list.append(pro)
+        produto = Produto.objects.get(pk=request.POST['produtoId'])
+        grupo_fiscal = GrupoFiscal.objects.get(id=request.POST['grupoFiscalId'])
 
-        if pro.grupo_fiscal:
-            if pro.grupo_fiscal.regime_trib == '0':
+        produto.grupo_fiscal = grupo_fiscal
+
+        obj_list.append(produto)
+        if produto.grupo_fiscal:
+            if produto.grupo_fiscal.regime_trib == '0':
                 icms, created = ICMS.objects.get_or_create(
-                    grupo_fiscal=pro.grupo_fiscal)
+                    grupo_fiscal=produto.grupo_fiscal)
             else:
                 icms, created = ICMSSN.objects.get_or_create(
-                    grupo_fiscal=pro.grupo_fiscal)
+                    grupo_fiscal=produto.grupo_fiscal)
 
             ipi, created = IPI.objects.get_or_create(
-                grupo_fiscal=pro.grupo_fiscal)
+                grupo_fiscal=produto.grupo_fiscal)
             icms_dest, created = ICMSUFDest.objects.get_or_create(
-                grupo_fiscal=pro.grupo_fiscal)
+                grupo_fiscal=produto.grupo_fiscal)
             obj_list.append(icms)
             obj_list.append(ipi)
             obj_list.append(icms_dest)
@@ -115,4 +120,5 @@ class InfoProduto(View):
                                                                'p_fcp_dest', 'p_icms_dest', 'p_icms_inter', 'p_icms_inter_part',
                                                                'ipi_incluido_preco', 'incluir_bc_icms', 'incluir_bc_icmsst', 'icmssn_incluido_preco',
                                                                'icmssnst_incluido_preco', 'icms_incluido_preco', 'icmsst_incluido_preco'))
+
         return HttpResponse(data, content_type='application/json')

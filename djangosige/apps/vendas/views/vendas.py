@@ -8,6 +8,7 @@ from djangosige.apps.base.custom_views import CustomView, CustomCreateView, Cust
 
 from djangosige.apps.vendas.forms import OrcamentoVendaForm, PedidoVendaForm, ItensVendaFormSet, PagamentoFormSet
 from djangosige.apps.vendas.models import OrcamentoVenda, PedidoVenda, ItensVenda, Pagamento
+from djangosige.apps.cadastro.models import Produto #TESTES
 from djangosige.apps.cadastro.models import MinhaEmpresa
 from djangosige.apps.login.models import Usuario
 from djangosige.configs.settings import MEDIA_ROOT
@@ -30,7 +31,7 @@ class AdicionarVendaView(CustomCreateView):
 
     def get(self, request, form_class, *args, **kwargs):
         self.object = None
-
+        
         form = self.get_form(form_class)
         form.initial['vendedor'] = request.user.first_name or request.user
         form.initial['data_emissao'] = datetime.today().strftime('%d/%m/%Y')
@@ -46,7 +47,7 @@ class AdicionarVendaView(CustomCreateView):
         self.object = None
         # Tirar . dos campos decimais
         req_post = request.POST.copy()
-
+        
         for key in req_post:
             if ('desconto' in key or
                 'quantidade' in key or
@@ -61,13 +62,13 @@ class AdicionarVendaView(CustomCreateView):
 
         form = self.get_form(form_class)
         produtos_form = ItensVendaFormSet(request.POST, prefix='produtos_form')
-        pagamento_form = PagamentoFormSet(
-            request.POST, prefix='pagamento_form')
+        
+        pagamento_form = PagamentoFormSet(request.POST, prefix='pagamento_form')
 
         if (form.is_valid() and produtos_form.is_valid() and pagamento_form.is_valid()):
             self.object = form.save(commit=False)
             self.object.save()
-
+            
             for pform in produtos_form:
                 if pform.cleaned_data != {}:
                     itens_venda_obj = pform.save(commit=False)
@@ -209,27 +210,32 @@ class PedidoVendaEntregaHojeListView(PedidoVendaListView):
     def get_queryset(self):
         return PedidoVenda.objects.filter(data_entrega=datetime.now().date(), status='0')
 
-
+# Os itens não estão sendo excluídos após o salvamento de uma venda!
 class EditarVendaView(CustomUpdateView):
 
     def get_success_message(self, cleaned_data):
         return self.success_message % dict(cleaned_data, id=self.object.pk)
 
+    # Objeto Pedido de venda
     def get_context_data(self, **kwargs):
         context = super(EditarVendaView, self).get_context_data(**kwargs)
         return self.view_context(context)
 
     def get(self, request, form_class, *args, **kwargs):
-
-        form = form = self.get_form(form_class)
+        form = self.get_form(form_class)
         form.initial['total_sem_imposto'] = self.object.get_total_sem_imposto()
-
         produtos_form = ItensVendaFormSet(
             instance=self.object, prefix='produtos_form')
+
         itens_list = ItensVenda.objects.filter(venda_id=self.object.id)
+
+        
         produtos_form.initial = [{'total_sem_desconto': item.get_total_sem_desconto(),
                                   'total_impostos': item.get_total_impostos(),
+                                  'grupo_fiscal': 1,
+                                  #'grupo_fiscal_nota': Produto.objects.get(id=item.produto_id).grupo_fiscal,
                                   'total_com_impostos': item.get_total_com_impostos()} for item in itens_list]
+        
 
         pagamento_form = PagamentoFormSet(
             instance=self.object, prefix='pagamento_form')
@@ -244,7 +250,7 @@ class EditarVendaView(CustomUpdateView):
     def post(self, request, form_class, *args, **kwargs):
         # Tirar . dos campos decimais
         req_post = request.POST.copy()
-
+        
         for key in req_post:
             if ('desconto' in key or
                 'quantidade' in key or
@@ -256,6 +262,8 @@ class EditarVendaView(CustomUpdateView):
                 req_post[key] = req_post[key].replace('.', '')
 
         request.POST = req_post
+        
+        itens_list = ItensVenda.objects.filter(venda_id=self.object.id)
 
         form = self.get_form(form_class)
         produtos_form = ItensVendaFormSet(
@@ -271,6 +279,8 @@ class EditarVendaView(CustomUpdateView):
                 if pform.cleaned_data != {}:
                     itens_venda_obj = pform.save(commit=False)
                     itens_venda_obj.venda_id = self.object
+                    itens_venda_obj = pform.save(commit=False)
+                    itens_venda_obj.venda_id = self.object
                     itens_venda_obj.calcular_pis_cofins()
                     itens_venda_obj.save()
 
@@ -282,6 +292,32 @@ class EditarVendaView(CustomUpdateView):
         return self.form_invalid(form=form,
                                  produtos_form=produtos_form,
                                  pagamento_form=pagamento_form)
+
+
+class EditarPedidoVendaView(EditarVendaView):
+    form_class = PedidoVendaForm
+    model = PedidoVenda
+    template_name = "vendas/pedido_venda/pedido_venda_edit.html"
+    success_url = reverse_lazy('vendas:listapedidovendaview')
+    success_message = "<b>Pedido de venda %(id)s </b>editado com sucesso."
+    permission_codename = 'change_pedidovenda'
+
+    def view_context(self, context):
+        context['title_complete'] = 'EDITAR PEDIDO DE VENDA N°' + \
+            str(self.object.id)
+        context['return_url'] = reverse_lazy('vendas:listapedidovendaview')
+        return context
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form_class = self.get_form_class()
+        return super(EditarPedidoVendaView, self).get(request, form_class, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form_class = self.get_form_class()
+        return super(EditarPedidoVendaView, self).post(request, form_class, *args, **kwargs)
+
 
 
 class EditarOrcamentoVendaView(EditarVendaView):
@@ -308,30 +344,6 @@ class EditarOrcamentoVendaView(EditarVendaView):
         form_class = self.get_form_class()
         return super(EditarOrcamentoVendaView, self).post(request, form_class, *args, **kwargs)
 
-
-class EditarPedidoVendaView(EditarVendaView):
-    form_class = PedidoVendaForm
-    model = PedidoVenda
-    template_name = "vendas/pedido_venda/pedido_venda_edit.html"
-    success_url = reverse_lazy('vendas:listapedidovendaview')
-    success_message = "<b>Pedido de venda %(id)s </b>editado com sucesso."
-    permission_codename = 'change_pedidovenda'
-
-    def view_context(self, context):
-        context['title_complete'] = 'EDITAR PEDIDO DE VENDA N°' + \
-            str(self.object.id)
-        context['return_url'] = reverse_lazy('vendas:listapedidovendaview')
-        return context
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        form_class = self.get_form_class()
-        return super(EditarPedidoVendaView, self).get(request, form_class, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        form_class = self.get_form_class()
-        return super(EditarPedidoVendaView, self).post(request, form_class, *args, **kwargs)
 
 
 class GerarPedidoVendaView(CustomView):
