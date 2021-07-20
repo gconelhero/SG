@@ -178,6 +178,9 @@ TIPO_IPI = (
 class GrupoFiscal(models.Model):
     descricao = models.CharField(max_length=255)
     regime_trib = models.CharField(max_length=1, choices=REGIME_TRIB_ESCOLHAS)
+    #Implementação NOVA. Relacionar o CFOP do produto ao grupo fiscal.
+    cfop_padrao = models.ForeignKey(
+        'fiscal.NaturezaOperacao', null=True, blank=True, on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = "Grupo Fiscal"

@@ -94,10 +94,12 @@ class InfoProduto(View):
     def post(self, request, *args, **kwargs):
         obj_list = []
         produto = Produto.objects.get(pk=request.POST['produtoId'])
-        grupo_fiscal = GrupoFiscal.objects.get(id=request.POST['grupoFiscalId'])
-
-        produto.grupo_fiscal = grupo_fiscal
-
+        if request.POST['grupoFiscalId'] != '':
+            grupo_fiscal = GrupoFiscal.objects.get(id=request.POST['grupoFiscalId'])
+            produto.grupo_fiscal = grupo_fiscal
+        else:
+            produto.grupo_fiscal = None
+        
         obj_list.append(produto)
         if produto.grupo_fiscal:
             if produto.grupo_fiscal.regime_trib == '0':
@@ -119,6 +121,6 @@ class InfoProduto(View):
                                                                'tipo_ipi', 'p_ipi', 'valor_fixo', 'p_icms', 'p_red_bc', 'p_icmsst', 'p_red_bcst', 'p_mvast',
                                                                'p_fcp_dest', 'p_icms_dest', 'p_icms_inter', 'p_icms_inter_part',
                                                                'ipi_incluido_preco', 'incluir_bc_icms', 'incluir_bc_icmsst', 'icmssn_incluido_preco',
-                                                               'icmssnst_incluido_preco', 'icms_incluido_preco', 'icmsst_incluido_preco'))
+                                                               'icmssnst_incluido_preco', 'icms_incluido_preco', 'icmsst_incluido_preco'))  
 
         return HttpResponse(data, content_type='application/json')

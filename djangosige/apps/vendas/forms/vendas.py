@@ -117,6 +117,8 @@ class PedidoVendaForm(VendaForm):
         labels['status'] = _('Status')
         labels['orcamento'] = _('Orçamento')
 
+        
+
 
 class ItensVendaForm(forms.ModelForm):
     total_sem_desconto = forms.DecimalField(widget=forms.TextInput(
@@ -156,7 +158,6 @@ class ItensVendaForm(forms.ModelForm):
         self.fields['subtotal'].localize = True
 
         self.fields['grupo_fiscal_nota'].localize = True
-        #self.fields['grupo_fiscal_nota'].initial = 1
 
         self.fields['total_sem_desconto'].localize = True
         self.fields['total_impostos'].localize = True

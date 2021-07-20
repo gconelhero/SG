@@ -53,12 +53,10 @@ class InfoVenda(View):
             itens_hidden_fields_dict = {}
             itens_editable_fields_dict = {}
             itens_fields_dict['produto_id'] = item.produto.id
-            itens_fields_dict[
-                'controlar_estoque'] = item.produto.controlar_estoque
+            itens_fields_dict['controlar_estoque'] = item.produto.controlar_estoque
             itens_fields_dict['produto'] = item.produto.descricao
             itens_hidden_fields_dict['codigo'] = item.produto.codigo
-            itens_hidden_fields_dict['unidade'] = item.produto.get_sigla_unidade(
-            )
+            itens_hidden_fields_dict['unidade'] = item.produto.get_sigla_unidade()
             itens_hidden_fields_dict['cfop'] = item.produto.get_cfop_padrao()
             itens_hidden_fields_dict['ncm'] = item.produto.ncm
             itens_fields_dict['quantidade'] = item.format_quantidade()

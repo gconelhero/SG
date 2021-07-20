@@ -32,6 +32,7 @@ class AdicionarVendaView(CustomCreateView):
     def get(self, request, form_class, *args, **kwargs):
         self.object = None
         
+        
         form = self.get_form(form_class)
         form.initial['vendedor'] = request.user.first_name or request.user
         form.initial['data_emissao'] = datetime.today().strftime('%d/%m/%Y')
@@ -96,6 +97,7 @@ class AdicionarOrcamentoVendaView(AdicionarVendaView):
     def view_context(self, context):
         context['title_complete'] = 'ADICIONAR ORÇAMENTO DE VENDA'
         context['return_url'] = reverse_lazy('vendas:listaorcamentovendaview')
+
         return context
 
     def get(self, request, *args, **kwargs):
@@ -104,6 +106,7 @@ class AdicionarOrcamentoVendaView(AdicionarVendaView):
 
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
+        print(form_class)
         return super(AdicionarOrcamentoVendaView, self).post(request, form_class, *args, **kwargs)
 
 
@@ -232,7 +235,6 @@ class EditarVendaView(CustomUpdateView):
         
         produtos_form.initial = [{'total_sem_desconto': item.get_total_sem_desconto(),
                                   'total_impostos': item.get_total_impostos(),
-                                  'grupo_fiscal': 1,
                                   #'grupo_fiscal_nota': Produto.objects.get(id=item.produto_id).grupo_fiscal,
                                   'total_com_impostos': item.get_total_com_impostos()} for item in itens_list]
         
@@ -277,10 +279,10 @@ class EditarVendaView(CustomUpdateView):
 
             for pform in produtos_form:
                 if pform.cleaned_data != {}:
+                    print(pform)
                     itens_venda_obj = pform.save(commit=False)
                     itens_venda_obj.venda_id = self.object
-                    itens_venda_obj = pform.save(commit=False)
-                    itens_venda_obj.venda_id = self.object
+                    
                     itens_venda_obj.calcular_pis_cofins()
                     itens_venda_obj.save()
 
@@ -332,11 +334,13 @@ class EditarOrcamentoVendaView(EditarVendaView):
         context['title_complete'] = 'EDITAR ORÇAMENTO DE VENDA N°' + \
             str(self.object.id)
         context['return_url'] = reverse_lazy('vendas:listaorcamentovendaview')
+        context['sem_grupo_fiscal'] = 1
         return context
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         form_class = self.get_form_class()
+
         return super(EditarOrcamentoVendaView, self).get(request, form_class, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):

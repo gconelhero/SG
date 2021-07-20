@@ -1035,8 +1035,8 @@ $.Admin.vendaForm = {
             if($(this).val()){
                 var postData = {
                     'produtoId': $(this).val(),
+                    'grupoFiscalId': grupo_fiscal_input.val()
                 }
-                postData['grupoFiscalId'] = grupo_fiscal_input.val()
 
                 $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
             }else{
@@ -1049,18 +1049,27 @@ $.Admin.vendaForm = {
         // GRupo fiscal
         grupo_fiscal_input.on('change', function(event, initial){
             var form_number = $(this).prop('id').match(/\d/)[0];
+            
             if($(this).val()){
-                
                 var postData = {
                     'grupoFiscalId': $(this).val(),
                 }
-                postData['produtoId'] = produtos_input.val()
-
+                postData['produtoId'] = $(produtos_input[form_number]).val()
+                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
+            }else{
+                _this.handleProdutoInfo(null, form_number, initial);
+            }
+            if($(this).val() === '') {
+                var postData = {
+                    'grupoFiscalId': $(this).val(),
+                }
+                postData['produtoId'] = $(produtos_input[form_number]).val()
                 $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
             }else{
                 _this.handleProdutoInfo(null, form_number, initial);
             }
         });
+        
 
         grupo_fiscal_input.trigger('change', [true]);
 
@@ -2036,7 +2045,6 @@ $.Admin.compraForm = {
             if($(this).val()){
                 var postData = {
                     'produtoId': $(this).val(),
-
                 }
                 $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
             }else{
@@ -2050,13 +2058,14 @@ $.Admin.compraForm = {
         grupo_fiscal_input.on('change', function(event, initial){
             var form_number = $(this).prop('id').match(/\d/)[0];
             if($(this).val()){
+                console.log($(this).val())
                 var postData = {
                     'grupoFiscalId': $(this).val(),
 
                 }
                 $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
             }else{
-                _this.handleProdutoInfo(null, form_number, initial);
+                _this.handleProdutoInfo(null, form_number, initi);
             }
         });
 
@@ -2655,7 +2664,7 @@ $.Admin.movimentoEstoqueForm = {
                         }
 
                         newForm.find('select[id$=-produto]').val(data[i].fields['produto_id']);
-                        newForm.find('select[id$=-grupo_fiscal_nota]').val(data[i].fields['grupo_fiscal_nota']);
+                        //newForm.find('select[id$=-grupo_fiscal_nota]').val(data[i].fields['grupo_fiscal_nota']);
                         newForm.find('input[id$=-quantidade]').val(data[i].fields['quantidade']);
                         newForm.find('input[id$=-valor_unit]').val(data[i].fields['valor_unit']);
                         newForm.find('input[id$=-subtotal]').val(data[i].fields['vprod']);
