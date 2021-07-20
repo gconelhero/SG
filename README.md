@@ -1,6 +1,6 @@
 # SG
 
-Sistema Gestão
+Sistema de Gestão
 
 ## Dependências
 
