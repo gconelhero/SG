@@ -5,10 +5,10 @@ from django.http import HttpResponse
 from django.core import serializers
 
 from djangosige.apps.cadastro.models import Pessoa, Cliente, Fornecedor, Transportadora, Produto
-from djangosige.apps.fiscal.models import ICMS, ICMSSN, IPI, ICMSUFDest, GrupoFiscal
+from djangosige.apps.fiscal.models import ICMS, ICMSSN, IPI, ICMSUFDest, GrupoFiscal, NaturezaOperacao
 
 # SG CS
-from djangosige.apps.vendas.models import ItensVenda
+from djangosige.apps.vendas.views import AdicionarPedidoVendaView, EditarPedidoVendaView
 
 class InfoCliente(View):
 
@@ -93,34 +93,58 @@ class InfoProduto(View):
 
     def post(self, request, *args, **kwargs):
         obj_list = []
-        produto = Produto.objects.get(pk=request.POST['produtoId'])
-        if request.POST['grupoFiscalId'] != '':
-            grupo_fiscal = GrupoFiscal.objects.get(id=request.POST['grupoFiscalId'])
-            produto.grupo_fiscal = grupo_fiscal
-        else:
-            produto.grupo_fiscal = None
-        
-        obj_list.append(produto)
-        if produto.grupo_fiscal:
-            if produto.grupo_fiscal.regime_trib == '0':
-                icms, created = ICMS.objects.get_or_create(
+
+        try:
+            produto = Produto.objects.get(pk=request.POST['produtoId'])
+            obj_list.append(produto)
+
+            if request.POST['grupoFiscalId'] != '' and list(request.POST.keys())[0] == 'grupoFiscalId':
+                grupo_fiscal = GrupoFiscal.objects.get(id=request.POST['grupoFiscalId'])
+                produto.grupo_fiscal = grupo_fiscal
+            
+            elif request.POST['grupoFiscalId'] == '' and list(request.POST.keys())[0] == 'grupoFiscalId':
+                produto.grupo_fiscal = None
+            
+            if list(request.POST.keys())[0] == 'produtoId':
+                grupo_fiscal = produto.grupo_fiscal
+                post_change = request.POST.copy()
+                if grupo_fiscal != None:
+                    post_change['grupoFiscalId'] = grupo_fiscal.id
+                    request.POST = post_change
+                
+        except Exception as erro:
+            print("ERRO -> NÃO EXISTE PRODUTO", erro)
+            produto = None
+            pass
+
+        try:
+            if produto.grupo_fiscal:
+                if produto.grupo_fiscal.regime_trib == '0':
+                    icms, created = ICMS.objects.get_or_create(
+                        grupo_fiscal=produto.grupo_fiscal)
+                else:
+                    icms, created = ICMSSN.objects.get_or_create(
+                        grupo_fiscal=produto.grupo_fiscal)
+
+                ipi, created = IPI.objects.get_or_create(
                     grupo_fiscal=produto.grupo_fiscal)
-            else:
-                icms, created = ICMSSN.objects.get_or_create(
+                icms_dest, created = ICMSUFDest.objects.get_or_create(
                     grupo_fiscal=produto.grupo_fiscal)
+                
+                obj_list.append(icms)
+                obj_list.append(ipi)
+                obj_list.append(icms_dest)
+                if request.POST['grupoFiscalId'] != '':
+                    grupo_fiscal = GrupoFiscal.objects.get(id=request.POST['grupoFiscalId'])
+            
+            data = serializers.serialize('json', obj_list, fields=('venda', 'controlar_estoque', 'estoque_atual', 'grupo_fiscal', 'cfop_padrao',
+                                                                'tipo_ipi', 'p_ipi', 'valor_fixo', 'p_icms', 'p_red_bc', 'p_icmsst', 'p_red_bcst', 'p_mvast',
+                                                                'p_fcp_dest', 'p_icms_dest', 'p_icms_inter', 'p_icms_inter_part',
+                                                                'ipi_incluido_preco', 'incluir_bc_icms', 'incluir_bc_icmsst', 'icmssn_incluido_preco',
+                                                                'icmssnst_incluido_preco', 'icms_incluido_preco', 'icmsst_incluido_preco'))
 
-            ipi, created = IPI.objects.get_or_create(
-                grupo_fiscal=produto.grupo_fiscal)
-            icms_dest, created = ICMSUFDest.objects.get_or_create(
-                grupo_fiscal=produto.grupo_fiscal)
-            obj_list.append(icms)
-            obj_list.append(ipi)
-            obj_list.append(icms_dest)
-
-        data = serializers.serialize('json', obj_list, fields=('venda', 'controlar_estoque', 'estoque_atual',
-                                                               'tipo_ipi', 'p_ipi', 'valor_fixo', 'p_icms', 'p_red_bc', 'p_icmsst', 'p_red_bcst', 'p_mvast',
-                                                               'p_fcp_dest', 'p_icms_dest', 'p_icms_inter', 'p_icms_inter_part',
-                                                               'ipi_incluido_preco', 'incluir_bc_icms', 'incluir_bc_icmsst', 'icmssn_incluido_preco',
-                                                               'icmssnst_incluido_preco', 'icms_incluido_preco', 'icmsst_incluido_preco'))  
-
-        return HttpResponse(data, content_type='application/json')
+            return HttpResponse(data, content_type='application/json')
+            
+        except Exception as erro:
+            print(erro, "PRODUTO NÃO ENCONTRADO")
+            pass

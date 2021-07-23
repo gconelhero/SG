@@ -292,8 +292,10 @@ $.Admin.formset = {
 
             //Remover formset
             currentBox.on('click', '.remove-formset', function(e){
+                
                 e.preventDefault();
                 var parentFormset = $(this).parents('.formset');
+                parentFormset.find('select[id$=-produto]').val(0)
                 var entryId = parentFormset.find('input:hidden[id $="-id"],input:hidden[id $="grupo_ptr"]');
 
                 if(entryId.length){
@@ -968,7 +970,8 @@ $.Admin.vendaForm = {
         var transportadora_input = $('#id_transportadora')
         var cond_pag_input = $('#id_cond_pagamento');
         var produtos_input = $('select.select-produto');
-        var grupo_fiscal_input = $('select.select-grupo_fiscal_nota');
+        var grupo_fiscal_input = $('select.select-grupo_fiscal');
+
 
         $.Admin.maskInput.maskVenda();
         //Preencher campos edit view
@@ -1037,10 +1040,40 @@ $.Admin.vendaForm = {
                     'produtoId': $(this).val(),
                     'grupoFiscalId': grupo_fiscal_input.val()
                 }
-
+                
                 $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
             }else{
                 _this.handleProdutoInfo(null, form_number, initial);
+            }
+            if(postData === undefined) {
+                var postData = {
+                    'produtoId': '',
+                    'grupoFiscalId': grupo_fiscal_input.val()
+                }
+            }
+            //ZERA O FORMULÁRIO QUANDO PRODUTO FOR 0
+            if(postData['produtoId'] === ''){
+                var form_atual = $('div[id=produtos_form-' + form_number + ']');
+                form_atual.find('input[id$=-quantidade]').val(1);
+                form_atual.find('input[id$=-valor_unit]').val('0,00');
+                form_atual.find('select[id$=-tipo_desconto]').val('0');
+                form_atual.find('input[id$=-desconto]').val('0,00');
+                form_atual.find('input[id$=-subtotal]').val('0,00');
+                form_atual.find('input[id$=-total_sem_desconto]').val('0,00');
+                form_atual.find('input[id$=_frete]').val('0,00');
+                form_atual.find('input[id$=_despesas]').val('0,00');
+                form_atual.find('input[id$=_seguro]').val('0,00');
+                form_atual.find('input[id$=-total_impostos]').val('0,00');
+                form_atual.find('input[id$=-total_com_impostos]').val('0,00');
+                form_atual.find('input.modal-field[type=text]').val('0.00');
+                form_atual.find('input[id$=-auto_calcular_impostos]').prop('checked', true);
+
+                if(form_atual.find('select[id$=-grupo_fiscal]').val() !== ''){
+                    form_atual.find('select[id$=-grupo_fiscal]').val('');
+                }
+                if(form_atual.find('select[id$=-cfop_produto]').val() !== ''){
+                    form_atual.find('select[id$=-cfop_produto]').val('');
+                }
             }
         });
 
@@ -1053,51 +1086,31 @@ $.Admin.vendaForm = {
             if($(this).val()){
                 var postData = {
                     'grupoFiscalId': $(this).val(),
+                    'produtoId': $(produtos_input[form_number]).val()
                 }
-                postData['produtoId'] = $(produtos_input[form_number]).val()
+
+                if($(produtos_input[form_number]).val() === undefined){
+                    var form_atual = $('div[id=produtos_form-' + form_number + ']');
+                    postData['produtoId'] = form_atual.find('select[id$=-produto]').val()
+                }
+                
                 $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
             }else{
                 _this.handleProdutoInfo(null, form_number, initial);
             }
+
             if($(this).val() === '') {
                 var postData = {
                     'grupoFiscalId': $(this).val(),
+                    'produtoId': $(produtos_input[form_number]).val()
                 }
-                postData['produtoId'] = $(produtos_input[form_number]).val()
-                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
-            }else{
-                _this.handleProdutoInfo(null, form_number, initial);
+                
+                if($(produtos_input[form_number]).val() === undefined){
+                    var form_atual = $('div[id=produtos_form-' + form_number + ']');
+                    postData['produtoId'] = form_atual.find('select[id$=-produto]').val()
+                }
             }
-        });
-        
-
-        grupo_fiscal_input.trigger('change', [true]);
-
-/*
-
-        produtos_input.on('change', function(event, initial){
-            var form_number = $(this).prop('id').match(/\d/)[0];
-            if($(this).val()){
-                var postData = {
-                    'produtoId': $(this).val(),
-                }
-
-                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
-            }else{
-                _this.handleProdutoInfo(null, form_number, initial);
-            }
-        });
-
-        produtos_input.trigger('change', [true]);
-        
-        // GRupo fiscal
-        grupo_fiscal_input.on('change', function(event, initial){
-            var form_number = $(this).prop('id').match(/\d/)[0];
-            if($(this).val()){
-                var postData = {
-                    'grupoFiscalId': $(this).val(),
-
-                }
+            if(postData['produtoId'] !== '') {
                 $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
             }else{
                 _this.handleProdutoInfo(null, form_number, initial);
@@ -1105,9 +1118,6 @@ $.Admin.vendaForm = {
         });
 
         grupo_fiscal_input.trigger('change', [true]);
-
-*/
-
 
         /*  Eventos  */
 
@@ -1179,6 +1189,7 @@ $.Admin.vendaForm = {
             return false;
         });
     },
+
 
     setInitialItensData: function(prod_formset){
         prod_formset.find('input[id$=-quantidade]').val(1);
@@ -1400,6 +1411,7 @@ $.Admin.vendaForm = {
             }
         });
     },
+    
 
     setItensFields: function(form_number){
         var form_atual = $('div[id=produtos_form-' + form_number + ']');
@@ -1445,6 +1457,35 @@ $.Admin.vendaForm = {
             vsubtotal_sem_desconto = parseFloat(vtotal) + parseFloat(vdesconto);
             vtotal_sem_impostos = parseFloat(vtotal);
         }
+
+        //SE O GRUPO FISCAL FOR SETADO COMO VAZIO ELE ZERA OS VALORES DO FORMULÁRIO
+        if(form_atual.find('select[id$=-grupo_fiscal]').val() === '') {
+            var pipi = form_atual.find('input[id$=-p_ipi]').val(0);
+            var picms = form_atual.find('input[id$=-p_icms]').val('0');
+            var picmsst = form_atual.find('input[id$=-p_icmsst]').val('0');
+            var pfcp = form_atual.find('input[id$=-pfcp]').val(0);
+            var picmsdest = form_atual.find('input[id$=-p_icms_dest]').val('0');
+            var picmsinter = form_atual.find('input[id$=-p_icms_inter]').val('0');
+            var picmspart = form_atual.find('input[id$=-p_icms_part]').val('0');
+            var vipi = 0;
+            form_atual.find('input[id$=-vbc_ipi]').val(parseFloat(vipi).toFixed(2));
+            var vicms = 0;
+            form_atual.find('input[id$=-vbc_icms]').val(parseFloat(vicms).toFixed(2));
+            form_atual.find('input[id$=-vicms]').val(parseFloat(vicms).toFixed(2));
+            var vicmsst = 0;
+            var vfcp = 0;
+            form_atual.find('input[id$=-vfcp]').val(parseFloat(vfcp).toFixed(2));
+            var vicmsdest = 0;
+            var vicmsremet = 0;
+            var red_bc_icms = 0
+            form_atual.find('input[id$=-p_red_bc]').val(parseFloat(red_bc_icms).toFixed(2));
+            var red_bc_icmsst = 0;
+            var tipo_ipi = form_atual.find('select[id$=-tipo_ipi]').val(0);
+            var ipi_bc_icms = form_atual.find('input[id$=-incluir_bc_icms]').is(':checked');
+            var ipi_bc_icmsst = form_atual.find('input[id$=-incluir_bc_icmsst]').is(':checked');
+            var pmvast = parseFloat(parseFloat(form_atual.find('input[id$=-p_mvast]').val())/100);
+        }
+
 
         /*   Impostos   */
         if(form_atual.find('select[id$=-produto]').val() && form_atual.find('input[id$=-auto_calcular_impostos]').is(':checked')){
@@ -1873,10 +1914,38 @@ $.Admin.vendaForm = {
     handleProdutoInfo: function(data, form_number, initial){
         var val_unit = $('#id_produtos_form-'+ form_number + '-valor_unit');
         var form_atual = $('div[id=produtos_form-' +form_number+ ']');
+        
+        //SETA O GRUPO FISCAL AUTOMATICAMENTE
+        if(data){
+            if(data[0].fields.grupo_fiscal === null) {
+                form_atual.find('select[id$=-grupo_fiscal]').val("");
 
+            }else{
+                form_atual.find('select[id$=-grupo_fiscal]').val(""+data[0].fields.grupo_fiscal);
+            }
+            //SETA O CFOP DO PRODUTO
+            if(data[0].fields.cfop_padrao === null && form_atual.find('select[id$=-cfop_produto]').val() === '') {
+                form_atual.find('select[id$=-cfop_produto]').val("");
+            }else if(data[0].fields.cfop_padrao === null && form_atual.find('select[id$=-cfop_produto]').val() !== '' ){
+                form_atual.find('select[id$=-cfop_produto]').val();
+            }else{
+                form_atual.find('select[id$=-cfop_produto]').val(data[0].fields.cfop_padrao);
+            }
+                
+            
+        }
         if(!initial){
-            form_atual.find('input[type=text]').val('0');
-            form_atual.find('input[id$=-quantidade]').val(1);
+            // Implementação para não alterar a quantidade de um produto quando mudar o grupo fiscal.
+            //form_atual.find('input[type=text]').val('0');
+            var quantidade_atual = form_atual.find('input[id$=-quantidade]').val()
+
+            if(quantidade_atual !== '1'){
+                form_atual.find('input[id$=-quantidade]').val(quantidade_atual)
+                
+            }else{
+                form_atual.find('input[id$=-quantidade]').val(1);                
+            }
+            
             form_atual.find('input[type=checkbox]').not('input[id$=-auto_calcular_impostos]').prop('checked',false);
         }
 
@@ -2054,23 +2123,6 @@ $.Admin.compraForm = {
 
         produtos_input.trigger('change', [true]);
 
-        //Grupo Fiscal
-        grupo_fiscal_input.on('change', function(event, initial){
-            var form_number = $(this).prop('id').match(/\d/)[0];
-            if($(this).val()){
-                console.log($(this).val())
-                var postData = {
-                    'grupoFiscalId': $(this).val(),
-
-                }
-                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
-            }else{
-                _this.handleProdutoInfo(null, form_number, initi);
-            }
-        });
-
-        grupo_fiscal_input.trigger('change', [true]);
-
         /*  Eventos  */
 
         //Caso campo esteja vazio manter 0
@@ -2106,7 +2158,7 @@ $.Admin.compraForm = {
         $('.formset').on('formCreated', function(){
             $.Admin.vendaForm.setInitialItensData($(this));
         });
-
+        
         //Mostrar modal do imposto ao clicar no icone
         $('.imposto-icon').on('click', function(){
             _this.mostrarModalImposto($(this).parents('.formset'));
@@ -2664,7 +2716,7 @@ $.Admin.movimentoEstoqueForm = {
                         }
 
                         newForm.find('select[id$=-produto]').val(data[i].fields['produto_id']);
-                        //newForm.find('select[id$=-grupo_fiscal_nota]').val(data[i].fields['grupo_fiscal_nota']);
+                        //newForm.find('select[id$=-grupo_fiscal]').val(data[i].fields['grupo_fiscal']);
                         newForm.find('input[id$=-quantidade]').val(data[i].fields['quantidade']);
                         newForm.find('input[id$=-valor_unit]').val(data[i].fields['valor_unit']);
                         newForm.find('input[id$=-subtotal]').val(data[i].fields['vprod']);

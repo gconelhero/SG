@@ -33,8 +33,7 @@ class InfoVenda(View):
         pedido_fields_dict['ind_final'] = venda.ind_final
         pedido_fields_dict['forma_pag'] = venda.get_forma_pagamento()
         pedido_fields_dict['n_itens'] = str(len(itens_venda))
-        pedido_fields_dict[
-            'valor_total_produtos'] = venda.format_total_produtos()
+        pedido_fields_dict['valor_total_produtos'] = venda.format_total_produtos()
 
         if venda.cond_pagamento:
             pedido_fields_dict['n_parcelas'] = venda.cond_pagamento.n_parcelas
@@ -57,7 +56,7 @@ class InfoVenda(View):
             itens_fields_dict['produto'] = item.produto.descricao
             itens_hidden_fields_dict['codigo'] = item.produto.codigo
             itens_hidden_fields_dict['unidade'] = item.produto.get_sigla_unidade()
-            itens_hidden_fields_dict['cfop'] = item.produto.get_cfop_padrao()
+            itens_hidden_fields_dict['cfop'] = item.get_cfop_produto() #item.produto.get_cfop_padrao()
             itens_hidden_fields_dict['ncm'] = item.produto.ncm
             itens_fields_dict['quantidade'] = item.format_quantidade()
             itens_fields_dict['valor_unit'] = item.format_valor_unit()

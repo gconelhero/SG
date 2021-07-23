@@ -8,8 +8,8 @@ from djangosige.apps.base.custom_views import CustomView, CustomCreateView, Cust
 
 from djangosige.apps.vendas.forms import OrcamentoVendaForm, PedidoVendaForm, ItensVendaFormSet, PagamentoFormSet
 from djangosige.apps.vendas.models import OrcamentoVenda, PedidoVenda, ItensVenda, Pagamento
-from djangosige.apps.cadastro.models import Produto #TESTES
-from djangosige.apps.cadastro.models import MinhaEmpresa
+from djangosige.apps.fiscal.models import NaturezaOperacao
+from djangosige.apps.cadastro.models import MinhaEmpresa, Produto
 from djangosige.apps.login.models import Usuario
 from djangosige.configs.settings import MEDIA_ROOT
 
@@ -70,6 +70,7 @@ class AdicionarVendaView(CustomCreateView):
             self.object = form.save(commit=False)
             self.object.save()
             
+            
             for pform in produtos_form:
                 if pform.cleaned_data != {}:
                     itens_venda_obj = pform.save(commit=False)
@@ -97,7 +98,9 @@ class AdicionarOrcamentoVendaView(AdicionarVendaView):
     def view_context(self, context):
         context['title_complete'] = 'ADICIONAR ORÇAMENTO DE VENDA'
         context['return_url'] = reverse_lazy('vendas:listaorcamentovendaview')
-
+        for form in context['produtos_form']:
+            form.fields['grupo_fiscal'].widget.attrs['class'] = 'modal-field select-grupo_fiscal'
+            form.fields['cfop_produto'].widget.attrs['class'] = 'modal-field select-cfop_produto'
         return context
 
     def get(self, request, *args, **kwargs):
@@ -106,7 +109,6 @@ class AdicionarOrcamentoVendaView(AdicionarVendaView):
 
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
-        print(form_class)
         return super(AdicionarOrcamentoVendaView, self).post(request, form_class, *args, **kwargs)
 
 
@@ -213,7 +215,7 @@ class PedidoVendaEntregaHojeListView(PedidoVendaListView):
     def get_queryset(self):
         return PedidoVenda.objects.filter(data_entrega=datetime.now().date(), status='0')
 
-# Os itens não estão sendo excluídos após o salvamento de uma venda!
+# Os itens estão sendo excluídos pelo remove-formset após o salvamento de uma venda!
 class EditarVendaView(CustomUpdateView):
 
     def get_success_message(self, cleaned_data):
@@ -229,13 +231,12 @@ class EditarVendaView(CustomUpdateView):
         form.initial['total_sem_imposto'] = self.object.get_total_sem_imposto()
         produtos_form = ItensVendaFormSet(
             instance=self.object, prefix='produtos_form')
-
+        
         itens_list = ItensVenda.objects.filter(venda_id=self.object.id)
 
-        
         produtos_form.initial = [{'total_sem_desconto': item.get_total_sem_desconto(),
                                   'total_impostos': item.get_total_impostos(),
-                                  #'grupo_fiscal_nota': Produto.objects.get(id=item.produto_id).grupo_fiscal,
+                                  'cfop_produto': item.cfop_produto,
                                   'total_com_impostos': item.get_total_com_impostos()} for item in itens_list]
         
 
@@ -252,7 +253,7 @@ class EditarVendaView(CustomUpdateView):
     def post(self, request, form_class, *args, **kwargs):
         # Tirar . dos campos decimais
         req_post = request.POST.copy()
-        
+
         for key in req_post:
             if ('desconto' in key or
                 'quantidade' in key or
@@ -276,15 +277,22 @@ class EditarVendaView(CustomUpdateView):
         if (form.is_valid() and produtos_form.is_valid() and pagamento_form.is_valid()):
             self.object = form.save(commit=False)
             self.object.save()
-
+            
+            compara_objetos = []
             for pform in produtos_form:
                 if pform.cleaned_data != {}:
-                    print(pform)
                     itens_venda_obj = pform.save(commit=False)
+                    compara_objetos.append(itens_venda_obj)
+
                     itens_venda_obj.venda_id = self.object
-                    
                     itens_venda_obj.calcular_pis_cofins()
                     itens_venda_obj.save()
+
+            for item in itens_list:
+                if item not in compara_objetos:
+                    item.delete()
+                    
+
 
             pagamento_form.instance = self.object
             pagamento_form.save()
@@ -331,21 +339,24 @@ class EditarOrcamentoVendaView(EditarVendaView):
     permission_codename = 'change_orcamentovenda'
 
     def view_context(self, context):
-        context['title_complete'] = 'EDITAR ORÇAMENTO DE VENDA N°' + \
-            str(self.object.id)
+        context['title_complete'] = 'EDITAR ORÇAMENTO DE VENDA N°' + str(self.object.id)
         context['return_url'] = reverse_lazy('vendas:listaorcamentovendaview')
-        context['sem_grupo_fiscal'] = 1
+        # ESCONDE OS CAMPOS DO FORMULÁRIO
+        for form in context['produtos_form']:
+            form.fields['grupo_fiscal'].widget.attrs['class'] = 'modal-field select-grupo_fiscal'
+            form.fields['cfop_produto'].widget.attrs['class'] = 'modal-field select-cfop_produto'
         return context
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         form_class = self.get_form_class()
-
+        itens = ItensVenda.objects.filter(venda_id=kwargs['pk'])
         return super(EditarOrcamentoVendaView, self).get(request, form_class, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form_class = self.get_form_class()
+        
         return super(EditarOrcamentoVendaView, self).post(request, form_class, *args, **kwargs)
 
 

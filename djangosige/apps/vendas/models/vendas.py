@@ -43,7 +43,9 @@ class ItensVenda(models.Model):
     produto = models.ForeignKey('cadastro.Produto', related_name="venda_produto",
                                 on_delete=models.CASCADE, null=True, blank=True)
     
-    grupo_fiscal_nota = models.ForeignKey('fiscal.GrupoFiscal', related_name='grupo_fiscal_nota',
+    grupo_fiscal = models.ForeignKey('fiscal.GrupoFiscal', related_name='grupo_fiscal',
+                                on_delete=models.CASCADE, null=True, blank=True)
+    cfop_produto = models.ForeignKey('fiscal.NaturezaOperacao', related_name='cfop_produto',
                                 on_delete=models.CASCADE, null=True, blank=True)
     venda_id = models.ForeignKey('vendas.Venda', related_name="itens_venda",
                                  on_delete=models.CASCADE)
@@ -129,7 +131,7 @@ class ItensVenda(models.Model):
     @property
     def vicms_cred_sn(self):
         try:
-            icms_obj = self.grupo_fiscal_nota.icms_sn_padrao.get()
+            icms_obj = self.grupo_fiscal.icms_sn_padrao.get()
             if icms_obj.p_cred_sn:
                 return round((self.subtotal * icms_obj.p_cred_sn) / 100, 2)
             else:
@@ -169,7 +171,7 @@ class ItensVenda(models.Model):
 
     def get_mot_deson_icms(self):
         try:
-            icms_obj = self.grupo_fiscal_nota.icms_padrao.get()
+            icms_obj = self.grupo_fiscal.icms_padrao.get()
             if icms_obj.mot_des_icms:
                 return icms_obj.get_mot_des_icms_display()
             else:
@@ -200,7 +202,7 @@ class ItensVenda(models.Model):
     def get_aliquota_pis(self, format=True):
         try:
             pis_padrao = PIS.objects.get(
-                grupo_fiscal=self.grupo_fiscal_nota)
+                grupo_fiscal=self.grupo_fiscal)
             
 
             if pis_padrao.valiq_pis:
@@ -220,7 +222,7 @@ class ItensVenda(models.Model):
     def get_aliquota_cofins(self, format=True):
         try:
             cofins_padrao = COFINS.objects.get(
-                grupo_fiscal=self.grupo_fiscal_nota)
+                grupo_fiscal=self.grupo_fiscal)
 
             if cofins_padrao.valiq_cofins:
                 if format:
@@ -243,13 +245,13 @@ class ItensVenda(models.Model):
         if self.desconto:
             vbc -= self.desconto
 
-        if self.grupo_fiscal_nota:
+        if self.grupo_fiscal:
 
             try:
                 pis_padrao = PIS.objects.get(
-                    grupo_fiscal=self.grupo_fiscal_nota)
+                    grupo_fiscal=self.grupo_fiscal)
                 cofins_padrao = COFINS.objects.get(
-                    grupo_fiscal=self.grupo_fiscal_nota)
+                    grupo_fiscal=self.grupo_fiscal)
 
                 # Calculo Vl. PIS
                 if pis_padrao.valiq_pis:
@@ -269,6 +271,12 @@ class ItensVenda(models.Model):
 
             except (PIS.DoesNotExist, COFINS.DoesNotExist):
                 pass
+
+    def get_cfop_produto(self):
+        if self.cfop_produto:
+            return self.cfop_produto.cfop
+        else:
+            return ''
 
 class Venda(models.Model):
     # Cliente
