@@ -1,18 +1,18 @@
 [
     {
         "fields": {
-            "date_joined": "2017-07-06T22:26:38.424Z",
-            "email": "test@test.com",
-            "first_name": "",
+            "date_joined": "2021-07-06 00:17:07.630199",
+            "email": "gconelhero@gmail.com",
+            "first_name": "Guilherme",
             "groups": [],
             "is_active": true,
             "is_staff": true,
             "is_superuser": true,
-            "last_login": "2017-07-06T22:26:58.068Z",
+            "last_login": "2021-07-26 14:58:46.168889",
             "last_name": "",
-            "password": "pbkdf2_sha256$30000$ETfxsXsTr29g$aZYn3cYCe2U1/0wHMje/hBhmM71GISaROPn5WBOy+es=",
+            "password": "pbkdf2_sha256$216000$XKhpElF7McZu$smIpE63wZNN7uMnwKHbyIMQ4qhggzy3675H5xQDLi2A=",
             "user_permissions": [],
-            "username": "test"
+            "username": "Guilherme"
         },
         "model": "auth.user",
         "pk": 1

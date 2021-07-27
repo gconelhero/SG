@@ -5,8 +5,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.forms import inlineformset_factory
 
 from djangosige.apps.vendas.models import OrcamentoVenda, PedidoVenda, ItensVenda, Venda
-from djangosige.apps.fiscal.models import GrupoFiscal
-from djangosige.apps.cadastro.models import Produto
 
 
 class VendaForm(forms.ModelForm):

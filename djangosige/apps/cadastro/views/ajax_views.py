@@ -5,10 +5,7 @@ from django.http import HttpResponse
 from django.core import serializers
 
 from djangosige.apps.cadastro.models import Pessoa, Cliente, Fornecedor, Transportadora, Produto
-from djangosige.apps.fiscal.models import ICMS, ICMSSN, IPI, ICMSUFDest, GrupoFiscal, NaturezaOperacao
-
-# SG CS
-from djangosige.apps.vendas.views import AdicionarPedidoVendaView, EditarPedidoVendaView
+from djangosige.apps.fiscal.models import ICMS, ICMSSN, IPI, ICMSUFDest, GrupoFiscal
 
 class InfoCliente(View):
 

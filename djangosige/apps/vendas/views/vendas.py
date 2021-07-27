@@ -8,7 +8,6 @@ from djangosige.apps.base.custom_views import CustomView, CustomCreateView, Cust
 
 from djangosige.apps.vendas.forms import OrcamentoVendaForm, PedidoVendaForm, ItensVendaFormSet, PagamentoFormSet
 from djangosige.apps.vendas.models import OrcamentoVenda, PedidoVenda, ItensVenda, Pagamento
-from djangosige.apps.fiscal.models import NaturezaOperacao
 from djangosige.apps.cadastro.models import MinhaEmpresa, Produto
 from djangosige.apps.login.models import Usuario
 from djangosige.configs.settings import MEDIA_ROOT

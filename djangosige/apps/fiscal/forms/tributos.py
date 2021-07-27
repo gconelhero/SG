@@ -9,16 +9,14 @@ class GrupoFiscalForm(forms.ModelForm):
 
     class Meta:
         model = GrupoFiscal
-        fields = ('descricao', 'regime_trib', 'cfop_padrao',)
+        fields = ('descricao', 'regime_trib',)
         widgets = {
             'descricao': forms.TextInput(attrs={'class': 'form-control', 'title': 'Insira uma breve descrição do grupo fiscal, EX: ICMS (Simples Nacional) + IPI'}),
             'regime_trib': forms.Select(attrs={'class': 'form-control'}),
-            'cfop_padrao': forms.Select(attrs={'class': 'form-control'}),
         }
         labels = {
             'descricao': _('Descrição'),
             'regime_trib': _('Regime Tributário'),
-            'cfop_padrao': _('CFOP (Padrão)'),
         }
 
 
