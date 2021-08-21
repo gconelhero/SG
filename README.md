@@ -26,6 +26,11 @@ sudo apt update
 pip install -r requirements.txt
 ```
 
+OBS: No Windows instale:
+```bash
+pip install python-magic-bin==<versão do magic>
+```
+
 2. Edite o conteúdo do arquivo **SG/configs/configs.py**
 
 3. Gere um `.env` local
