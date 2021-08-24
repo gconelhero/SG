@@ -74,11 +74,12 @@ class EditarClienteView(EditarPessoaView):
 
     def post(self, request, *args, **kwargs):
         req_post = request.POST.copy()
-        req_post['cliente_form-limite_de_credito'] = req_post['cliente_form-limite_de_credito'].replace(
-            '.', '')
+        req_post['cliente_form-limite_de_credito'] = req_post['cliente_form-limite_de_credito'].replace('.', '')
         request.POST = req_post
         self.object = self.get_object()
         form_class = self.get_form_class()
+        print(form_class)
         form = form_class(request.POST, request.FILES,
                           prefix='cliente_form', instance=self.object, request=request)
+        
         return super(EditarClienteView, self).post(request, form, *args, **kwargs)

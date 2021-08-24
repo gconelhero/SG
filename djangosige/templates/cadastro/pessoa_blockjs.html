@@ -8,6 +8,9 @@
   	{% for form in endereco_form %}
   	mun_inicial.push("{{form.municipio.initial}}");
   	{% endfor %}
+  	{% for form in fazenda_form %}
+  	mun_inicial.push("{{form.municipio.initial}}");
+  	{% endfor %}
 
     $.Admin.pessoaForm.init(cmun_path, mun_inicial);
   </script>  

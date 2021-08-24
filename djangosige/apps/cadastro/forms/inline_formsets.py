@@ -4,7 +4,7 @@ from django import forms
 from django.forms import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 
-from djangosige.apps.cadastro.models import Pessoa, Endereco, Telefone, Email, Site, Banco, Documento
+from djangosige.apps.cadastro.models import Pessoa, Endereco, Fazenda, Telefone, Email, Site, Banco, Documento
 
 
 class EnderecoForm(forms.ModelForm):
@@ -41,6 +41,31 @@ class EnderecoForm(forms.ModelForm):
             'uf': forms.Select(attrs={'class': 'form-control'}),
         }
 
+
+class FazendaForm(forms.ModelForm):
+
+    class Meta:
+        model = Fazenda
+        fields = ('nome','nome_impressao_nota','inscricao_estadual','endereco','uf', 'municipio', 'cmun',)
+
+        labels = {
+            'nome': _("Nome"),
+            'nome_impressao_nota': _("Nome para impressão da nota"),
+            'inscricao_estadual': _("Inscrição Estadual"),
+            'endereco': _("Endereço"),
+            'municipio': _("Município (sem acentuação)"),
+            'cmun': _("Código do município"),
+            'uf': _("UF"),
+        }
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'nome_impressao_nota': forms.TextInput(attrs={'class': 'form-control'}),
+            'inscricao_estadual': forms.TextInput(attrs={'class': 'form-control'}),
+            'endereco': forms.TextInput(attrs={'class': 'form-control'}),
+            'municipio': forms.Select(attrs={'class': 'form-control'}),
+            'cmun': forms.TextInput(attrs={'class': 'form-control'}),
+            'uf': forms.Select(attrs={'class': 'form-control'}),
+        }
 
 class TelefoneForm(forms.ModelForm):
 
@@ -119,6 +144,8 @@ class DocumentoForm(forms.ModelForm):
 
 EnderecoFormSet = inlineformset_factory(
     Pessoa, Endereco, form=EnderecoForm, extra=1, can_delete=True)
+FazendaFormSet = inlineformset_factory(
+    Pessoa, Fazenda, form=FazendaForm, extra=1, can_delete=True)
 TelefoneFormSet = inlineformset_factory(
     Pessoa, Telefone, form=TelefoneForm, extra=1, can_delete=True)
 EmailFormSet = inlineformset_factory(

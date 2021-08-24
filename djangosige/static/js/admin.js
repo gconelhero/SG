@@ -547,37 +547,78 @@ $.Admin.pessoaForm = {
     init: function(cmun_path, mun_inicial) {
         var _this = this;
         _this.trocarCampos();
+        
 
         $('input[type="radio"][name$="tipo_pessoa"]').change(function(){
             _this.trocarCampos($(this));
         });
 
         $('.formset').on('change', 'select[id$=-uf]', function(event, mun_inicial){
-            var form_number = $(this).prop('id').match(/\d/)[0];
-            var mun_input = $("#id_endereco_form-" + form_number + "-municipio");
-            mun_input.empty();
-            if($(this).val() && $(this).val() != 'EX'){
-                file_path = cmun_path + $(this).val() + '.csv'
-                $.ajax({
-                    type: "GET",
-                    url: file_path,
-                    dataType: "text",
-                    success: function(data){_this.processCmunData(data, mun_input, mun_inicial);}
+            if ($(this).prop('name').match('endereco') == 'endereco'){
+                var form_number = $(this).prop('id').match(/\d/)[0];
+                var mun_input = $("#id_endereco_form-" + form_number + "-municipio");
+                mun_input.empty();
+                if($(this).val() && $(this).val() != 'EX'){
+                    file_path = cmun_path + $(this).val() + '.csv'
+                    $.ajax({
+                        type: "GET",
+                        url: file_path,
+                        dataType: "text",
+                        success: function(data){_this.processCmunData(data, mun_input, mun_inicial);}
                 });
             }
-        });
+        }});
 
         if(mun_inicial.length){
-            $('select[id$=-uf').each(function(index){
-                $(this).trigger('change', mun_inicial[index]);
+                $('select[id$=-uf').each(function(index){
+                    if ($(this).prop('name').match('endereco') == 'endereco'){
+                        $(this).trigger('change', mun_inicial[index]);
+                    }
             });
         }
 
         $('body').on('change', 'select[id$=-municipio]', function(){
-            var form_number = $(this).prop('id').match(/\d/)[0];
-            var cmun_input = $("#id_endereco_form-" + form_number + "-cmun");
-            var cmun = $(this).find('option:selected').text().match(/\((.*)\)/);
-            cmun_input.val(cmun[1]);
+            if ($(this).prop('name').match('endereco') == 'endereco'){
+                var form_number = $(this).prop('id').match(/\d/)[0];
+                var cmun_input = $("#id_endereco_form-" + form_number + "-cmun");
+                var cmun = $(this).find('option:selected').text().match(/\((.*)\)/);
+                cmun_input.val(cmun[1]);
+            }
+        });
+        
+        
+        $('.formset').on('change', 'select[id$=-uf]', function(event, mun_inicial){
+            if ($(this).prop('name').match('fazenda') == 'fazenda'){
+                var form_number = $(this).prop('id').match(/\d/)[0];
+                var mun_input = $("#id_fazenda_form-" + form_number + "-municipio");
+                mun_input.empty();
+                if($(this).val() && $(this).val() != 'EX'){
+                    file_path = cmun_path + $(this).val() + '.csv'
+                    $.ajax({
+                        type: "GET",
+                        url: file_path,
+                        dataType: "text",
+                        success: function(data){_this.processCmunData(data, mun_input, mun_inicial);}
+                });
+            }
+        }});
+
+             
+        if(mun_inicial.length){
+            $('select[id$=-uf').each(function(index){
+                if ($(this).prop('name').match('fazenda') == 'fazenda'){
+                    $(this).trigger('change', mun_inicial[index]);
+            }});
+        }
+
+        $('body').on('change', 'select[id$=-municipio]', function(){
+
+            if ($(this).prop('name').match('fazenda') == 'fazenda'){
+                var form_number = $(this).prop('id').match(/\d/)[0];
+                var cmun_input = $("#id_fazenda_form-" + form_number + "-cmun");
+                var cmun = $(this).find('option:selected').text().match(/\((.*)\)/);
+                cmun_input.val(cmun[1]);
+            }
         });
     },
 
@@ -2031,7 +2072,7 @@ $.Admin.vendaForm = {
                     $('#uf_cliente').text(data[i].fields.uf);
                     $('#cep_cliente').text(data[i].fields.cep);
                 }
-
+                
                 if(data[i].model == 'cadastro.email'){
                     $('#email_cliente').text(data[i].fields.email);
                 }

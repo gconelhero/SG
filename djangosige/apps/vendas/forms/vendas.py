@@ -37,12 +37,13 @@ class VendaForm(forms.ModelForm):
         self.fields['impostos'].initial = '0.00'
 
     class Meta:
-        fields = ('data_emissao', 'cliente', 'ind_final', 'transportadora', 'mod_frete', 'veiculo', 'vendedor', 'desconto', 'local_orig',
+        fields = ('data_emissao', 'cliente', 'fazenda', 'ind_final', 'transportadora', 'mod_frete', 'veiculo', 'vendedor', 'desconto', 'local_orig',
                   'movimentar_estoque', 'tipo_desconto', 'frete', 'despesas', 'seguro', 'impostos', 'valor_total', 'cond_pagamento', 'observacoes',)
 
         widgets = {
             'data_emissao': forms.DateInput(attrs={'class': 'form-control datepicker'}),
             'cliente': forms.Select(attrs={'class': 'form-control'}),
+            'fazenda': forms.Select(attrs={'class': 'form-control'}),
             'ind_final': forms. CheckboxInput(attrs={'class': 'form-control'}),
             'transportadora': forms.Select(attrs={'class': 'form-control'}),
             'mod_frete': forms.Select(attrs={'class': 'form-control'}),'produto': forms.Select(attrs={'class': 'form-control select-produto'}),
@@ -63,6 +64,7 @@ class VendaForm(forms.ModelForm):
         labels = {
             'data_emissao': _('Data de Emissão'),
             'cliente': _('Cliente'),
+            'fazenda': _('Fazenda'),
             'ind_final': _('Consumidor final?'),
             'transportadora': _('Transportadora'),
             'mod_frete': _('Modalidade do frete'),

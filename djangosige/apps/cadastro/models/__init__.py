@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .base import Pessoa, PessoaFisica, PessoaJuridica, Endereco, Telefone, Email, Site, Banco, Documento, COD_UF, UF_SIGLA
+from .base import Pessoa, PessoaFisica, PessoaJuridica, Endereco, Fazenda, Telefone, Email, Site, Banco, Documento, COD_UF, UF_SIGLA
 from .empresa import Empresa, MinhaEmpresa
 from .cliente import Cliente
 from .fornecedor import Fornecedor

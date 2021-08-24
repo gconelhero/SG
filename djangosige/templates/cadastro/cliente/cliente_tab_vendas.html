@@ -19,7 +19,7 @@
         <td>{{venda.id}}</td>
         <td><b>{{venda.get_child.tipo_venda}}</b></td>
         <td><b>{{venda.get_child.get_status_display}}</b></td>
-        <td>{% if  venda.data_vencimento %}{{venda.format_data_vencimento}}{% endif %}</td>
+        <td>{% if venda.data_vencimento %}{{venda.format_data_vencimento}}{% endif %}</td>
         <td>{{venda.format_valor_total}}</td>        
       </tr>
       {% endfor %}

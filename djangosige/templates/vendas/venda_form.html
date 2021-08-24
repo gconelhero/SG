@@ -146,9 +146,20 @@
               </div>
               <a class="input-group-addon newwindow" style="color: green;" title="Adicionar cliente" href="{% url 'cadastro:addclienteview' %}"><i class="material-icons add-new-icon" title="Adicionar cliente">&#xE147;</i></a>
             </div>
+            <!-- FAZENDA -->
+            {% if form %}
+            <label>Fazenda</label>
+            {% if form.cliente.errors %}<label class="error">{% for error in form.cliente.errors %}{{error}}{% endfor %}</label>{% endif %}
+            <div class="input-group" style="margin-bottom: 0px;">
+              <div class="form-line">
+                {{form.fazenda}}
+              </div>
+              <a class="input-group-addon newwindow" style="color: green;" title="Adicionar cliente" href="{% url 'cadastro:addclienteview' %}"><i class="material-icons add-new-icon" title="Adicionar cliente">&#xE147;</i></a>
+            </div>
+            {% endif %}
           </div>
         </div>
-
+        <br>
         <div class="col-sm-6">
           <div class="form-group">
             <div class="form-line">

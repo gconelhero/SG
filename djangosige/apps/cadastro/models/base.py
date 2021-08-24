@@ -259,9 +259,42 @@ class Endereco(models.Model):
             self.logradouro, self.numero, self.municipio, self.uf)
         return s
 
-    def __str__(self):
+    def __str__(self):  
         s = u'%s, %s, %s (%s)' % (
             self.logradouro, self.numero, self.municipio, self.uf)
+        return s
+
+class Fazenda(models.Model):
+    pessoa_faz = models.ForeignKey(
+        Pessoa, related_name="fazenda", on_delete=models.CASCADE)
+    nome = models.CharField(max_length=64, null=True, blank=True)
+    nome_impressao_nota = models.CharField(max_length=64, null=True, blank=True)
+    inscricao_estadual = models.CharField(max_length=32, null=True, blank=True)
+    endereco = models.CharField(max_length=64, null=True, blank=True)
+    municipio = models.CharField(max_length=64, null=True, blank=True)
+    cmun = models.CharField(max_length=9, null=True, blank=True)
+    uf = models.CharField(max_length=3, null=True,
+                          blank=True, choices=UF_SIGLA)
+
+    @property
+    def format_ie(self):
+        if self.inscricao_estadual:
+            return 'IE: {}'.format(self.inscricao_estadual)
+        else:
+            return ''
+
+    @property
+    def format_endereco_completo(self):
+        return '{0} - {1} - {2} - {3}'.format(self.nome, self.endereco, self.municipio, self.uf)
+
+    def __unicode__(self):
+        s = u'%s, %s (%s)' % (
+            self.endereco, self.municipio, self.uf)
+        return s
+
+    def __str__(self):
+        s = u'%s (%s)' % (
+            self.municipio, self.uf)
         return s
 
 

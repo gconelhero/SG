@@ -4,7 +4,7 @@ from django.views.generic import View
 from django.http import HttpResponse
 from django.core import serializers
 
-from djangosige.apps.cadastro.models import Pessoa, Cliente, Fornecedor, Transportadora, Produto
+from djangosige.apps.cadastro.models import Pessoa, Fazenda, Cliente, Fornecedor, Transportadora, Produto
 from djangosige.apps.fiscal.models import ICMS, ICMSSN, IPI, ICMSUFDest, GrupoFiscal
 
 class InfoCliente(View):
@@ -13,10 +13,12 @@ class InfoCliente(View):
         obj_list = []
         pessoa = Pessoa.objects.get(pk=request.POST['pessoaId'])
         cliente = Cliente.objects.get(pk=request.POST['pessoaId'])
+        fazenda = Fazenda.objects.filter(pessoa_faz=request.POST['pessoaId'])  
+        print(fazenda)
         obj_list.append(cliente)
-
         if pessoa.endereco_padrao:
             obj_list.append(pessoa.endereco_padrao)
+        
         if pessoa.email_padrao:
             obj_list.append(pessoa.email_padrao)
         if pessoa.telefone_padrao:
@@ -29,6 +31,7 @@ class InfoCliente(View):
 
         data = serializers.serialize('json', obj_list, fields=('indicador_ie', 'limite_de_credito', 'cnpj', 'inscricao_estadual', 'responsavel', 'cpf', 'rg', 'id_estrangeiro', 'logradouro', 'numero', 'bairro',
                                                                'municipio', 'cmun', 'uf', 'pais', 'complemento', 'cep', 'email', 'telefone',))
+        print(data)
 
         return HttpResponse(data, content_type='application/json')
 
