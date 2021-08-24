@@ -10,3 +10,6 @@ cryptography>=2.3
 lxml==4.2.*
 pyOpenSSL==17.5.*
 signxml==2.5.*
+python-magic==0.4.*
+libmagic==1.*
+python-magic-bin==0.4.*
