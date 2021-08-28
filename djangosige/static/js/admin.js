@@ -1008,11 +1008,11 @@ $.Admin.vendaForm = {
     init: function(req_urls) {
         var _this = this;
         var cli_input = $('#id_cliente');
+        var faz_input = $('#id_fazenda');
         var transportadora_input = $('#id_transportadora')
         var cond_pag_input = $('#id_cond_pagamento');
         var produtos_input = $('select.select-produto');
         var grupo_fiscal_input = $('select.select-grupo_fiscal');
-
 
         $.Admin.maskInput.maskVenda();
         //Preencher campos edit view
@@ -1035,17 +1035,49 @@ $.Admin.vendaForm = {
         });
 
         cli_input.on('change', function(){
+            $('#id_fazenda option').remove();
+            $('#id_fazenda').append($('<option></option>').prop("value","").text('---------'));
             if($(this).val()){
                 var postData = {
                     'pessoaId': $(this).val(),
+                    'fazendaId': faz_input.val(),
                 }
                 $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_cliente_url'], postData, _this.handleClienteInfo);
             }else{
                 _this.handleClienteInfo();
             }
+            if($(this).val() === ''){
+                $('#id_fazenda option').remove();
+                $('#id_fazenda').append($('<option></option>').prop("value","").text('---------'));
+            }
         });
-
+        
+        faz_input.on('change', function(){
+            if($(this).val()){
+                var postData = {
+                    'fazendaId': $(this).val(),
+                    'pessoaId': cli_input.val(),
+                }
+                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_cliente_url'], postData, _this.handleClienteInfo);
+            }else{
+                _this.handleClienteInfo();
+            }
+            
+            if($(this).val() === '') {
+                var postData = {
+                    'fazendaId': $(this).val(),
+                    'pessoaId': cli_input.val(),
+                }
+            }
+            if(postData['pessoaId'] !== '') {
+                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_cliente_url'], postData, _this.handleClienteInfo);
+            }else{
+                _this.handleClienteInfo();
+            }
+        });
+        
         cli_input.change();
+        faz_input.change();
 
         transportadora_input.on('change', function(){
             if($(this).val()){
@@ -2037,13 +2069,56 @@ $.Admin.vendaForm = {
             if(!initial) form_atual.find('input[id$=-quantidade]').change();
         }
     },
-
+    // INFORMAÇÕES DO CLIENTE
     handleClienteInfo: function(data){
+        
         if(typeof data === 'undefined' || !data){
             $('.display-cliente-field').text('');
         }else{
             $('.display-cliente-field').text('');
+            // TRATANDO FAZENDAS EM VENDAS
+            var fazendas = []
+            var select_options = []
+            
+            for (var i = 0; i < $('#id_fazenda').prop('options').length; i++){
+                if ($('#id_fazenda option')[i].value !== '') {
+                    select_options.push(($('#id_fazenda option')[i].value));
+                    select_options = select_options.map(i=>Number(i));
+                    
+                }
+            
+            }
+
             for(var i = 0; i < data.length; i++) {
+                if(data[i].model == 'cadastro.fazenda'){
+                    fazendas.push(data[i]);
+                    
+                    
+                }
+            }
+
+            if (fazendas.length < 1){
+                $('#id_fazenda option').remove();
+            }
+            
+            if($('#id_fazenda').prop('options').length == 0){
+                $('#id_fazenda').append($('<option></option>').prop("value","").text('---------'));
+            }
+            
+            for(var i = 0; i < fazendas.length; i++){
+                if ($('#id_fazenda').prop('options').length < fazendas.length + 1 && select_options.includes(data[i].pk) === false){
+                    $('#id_fazenda').append($('<option></option>').prop("value",fazendas[i].pk).text(fazendas[i].fields.nome));
+                    
+                }
+            }
+            
+            if(fazenda_inicial !== false){
+                $('#id_fazenda').val(fazenda_inicial)
+                fazenda_inicial = false
+            }
+            
+            for(var i = 0; i < data.length; i++) {
+                
                 if(data[i].model == 'cadastro.pessoajuridica'){
                     $('#cpf_cnpj_cliente').text(data[i].fields.cnpj);
                     $('#ie_rg_cliente').text(data[i].fields.inscricao_estadual);
@@ -2051,6 +2126,7 @@ $.Admin.vendaForm = {
                 }else if(data[i].model == 'cadastro.pessoafisica'){
                     $('#cpf_cnpj_cliente').text(data[i].fields.cpf);
                     $('#ie_rg_cliente').text(data[i].fields.rg);
+                    
                 }
 
                 if(data[i].model == 'cadastro.cliente'){
@@ -2064,7 +2140,7 @@ $.Admin.vendaForm = {
                         $('#ind_ie_cliente').text('Não Contribuinte');
                     }
                 }
-
+                
                 if(data[i].model == 'cadastro.endereco'){
                     $('#endereco_cliente').text(data[i].fields.logradouro + ' ' + data[i].fields.numero);
                     $('#bairro_cliente').text(data[i].fields.bairro);
@@ -2080,6 +2156,21 @@ $.Admin.vendaForm = {
                 if(data[i].model == 'cadastro.telefone'){
                     $('#telefone_cliente').text(data[i].fields.telefone);
                 }
+            }
+            for(var i = 0; i < data.length; i++) {
+                if(data[i].model == 'cadastro.fazenda'){
+                    if($('#id_fazenda').val()){
+                        var fazenda_pk = $('#id_fazenda').val();
+                        if(data[i].pk === Number(fazenda_pk)){
+                            $('#ie_rg_cliente').text(data[i].fields.inscricao_estadual);
+                            $('#uf_cliente').text(data[i].fields.uf);
+                            $('#bairro_cliente').text(data[i].fields.bairro);
+                            $('#municipio_cliente').text(data[i].fields.municipio);
+                            $('#cep_cliente').text(data[i].fields.cep);
+                            $('#endereco_cliente').text(data[i].fields.endereco);
+                        }
+                    }    
+                }                    
             }
         }
     },

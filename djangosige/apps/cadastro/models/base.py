@@ -271,8 +271,10 @@ class Fazenda(models.Model):
     nome_impressao_nota = models.CharField(max_length=64, null=True, blank=True)
     inscricao_estadual = models.CharField(max_length=32, null=True, blank=True)
     endereco = models.CharField(max_length=64, null=True, blank=True)
+    bairro = models.CharField(max_length=64, null=True, blank=True)
     municipio = models.CharField(max_length=64, null=True, blank=True)
     cmun = models.CharField(max_length=9, null=True, blank=True)
+    cep = models.CharField(max_length=16, null=True, blank=True)
     uf = models.CharField(max_length=3, null=True,
                           blank=True, choices=UF_SIGLA)
 
@@ -294,7 +296,7 @@ class Fazenda(models.Model):
 
     def __str__(self):
         s = u'%s (%s)' % (
-            self.municipio, self.uf)
+            self.nome, self.uf)
         return s
 
 

@@ -9,6 +9,7 @@ from decimal import Decimal
 
 from djangosige.apps.fiscal.models import PIS, COFINS
 from djangosige.apps.estoque.models import DEFAULT_LOCAL_ID
+from djangosige.apps.cadastro.models import Fazenda
 
 import locale
 locale.setlocale(locale.LC_ALL, '')

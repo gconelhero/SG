@@ -46,15 +46,17 @@ class FazendaForm(forms.ModelForm):
 
     class Meta:
         model = Fazenda
-        fields = ('nome','nome_impressao_nota','inscricao_estadual','endereco','uf', 'municipio', 'cmun',)
+        fields = ('nome','nome_impressao_nota','inscricao_estadual','endereco','bairro','uf', 'cep', 'municipio', 'cmun',)
 
         labels = {
             'nome': _("Nome"),
             'nome_impressao_nota': _("Nome para impressão da nota"),
             'inscricao_estadual': _("Inscrição Estadual"),
             'endereco': _("Endereço"),
+            'bairro': _("Bairro"),
             'municipio': _("Município (sem acentuação)"),
             'cmun': _("Código do município"),
+            'cep': _("CEP (Apenas dígitos)"),
             'uf': _("UF"),
         }
         widgets = {
@@ -62,8 +64,10 @@ class FazendaForm(forms.ModelForm):
             'nome_impressao_nota': forms.TextInput(attrs={'class': 'form-control'}),
             'inscricao_estadual': forms.TextInput(attrs={'class': 'form-control'}),
             'endereco': forms.TextInput(attrs={'class': 'form-control'}),
+            'bairro': forms.TextInput(attrs={'class': 'form-control'}),
             'municipio': forms.Select(attrs={'class': 'form-control'}),
             'cmun': forms.TextInput(attrs={'class': 'form-control'}),
+            'cep': forms.TextInput(attrs={'class': 'form-control'}),
             'uf': forms.Select(attrs={'class': 'form-control'}),
         }
 

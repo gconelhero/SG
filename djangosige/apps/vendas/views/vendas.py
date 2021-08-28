@@ -5,10 +5,11 @@ from django.shortcuts import redirect
 from django.http import HttpResponse
 
 from djangosige.apps.base.custom_views import CustomView, CustomCreateView, CustomListView, CustomUpdateView
+from django.core.cache import cache
 
 from djangosige.apps.vendas.forms import OrcamentoVendaForm, PedidoVendaForm, ItensVendaFormSet, PagamentoFormSet
 from djangosige.apps.vendas.models import OrcamentoVenda, PedidoVenda, ItensVenda, Pagamento
-from djangosige.apps.cadastro.models import MinhaEmpresa, Produto
+from djangosige.apps.cadastro.models import MinhaEmpresa, Produto, Fazenda
 from djangosige.apps.login.models import Usuario
 from djangosige.configs.settings import MEDIA_ROOT
 
@@ -30,8 +31,6 @@ class AdicionarVendaView(CustomCreateView):
 
     def get(self, request, form_class, *args, **kwargs):
         self.object = None
-        
-        
         form = self.get_form(form_class)
         form.initial['vendedor'] = request.user.first_name or request.user
         form.initial['data_emissao'] = datetime.today().strftime('%d/%m/%Y')
@@ -223,6 +222,8 @@ class EditarVendaView(CustomUpdateView):
     # Objeto Pedido de venda
     def get_context_data(self, **kwargs):
         context = super(EditarVendaView, self).get_context_data(**kwargs)
+        if self.object.fazenda:
+            context['fazenda_inicial'] = self.object.fazenda.pk
         return self.view_context(context)
 
     def get(self, request, form_class, *args, **kwargs):
@@ -230,9 +231,8 @@ class EditarVendaView(CustomUpdateView):
         form.initial['total_sem_imposto'] = self.object.get_total_sem_imposto()
         produtos_form = ItensVendaFormSet(
             instance=self.object, prefix='produtos_form')
-        
         itens_list = ItensVenda.objects.filter(venda_id=self.object.id)
-
+            
         produtos_form.initial = [{'total_sem_desconto': item.get_total_sem_desconto(),
                                   'total_impostos': item.get_total_impostos(),
                                   'cfop_produto': item.cfop_produto,
@@ -355,7 +355,6 @@ class EditarOrcamentoVendaView(EditarVendaView):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form_class = self.get_form_class()
-        
         return super(EditarOrcamentoVendaView, self).post(request, form_class, *args, **kwargs)
 
 

@@ -3,6 +3,7 @@
 from django.views.generic import View
 from django.http import HttpResponse
 from django.core import serializers
+from django.core.cache import cache
 
 from djangosige.apps.cadastro.models import Pessoa, Fazenda, Cliente, Fornecedor, Transportadora, Produto
 from djangosige.apps.fiscal.models import ICMS, ICMSSN, IPI, ICMSUFDest, GrupoFiscal
@@ -13,26 +14,33 @@ class InfoCliente(View):
         obj_list = []
         pessoa = Pessoa.objects.get(pk=request.POST['pessoaId'])
         cliente = Cliente.objects.get(pk=request.POST['pessoaId'])
-        fazenda = Fazenda.objects.filter(pessoa_faz=request.POST['pessoaId'])  
-        print(fazenda)
+        fazendas = Fazenda.objects.all().filter(pessoa_faz=request.POST['pessoaId'])
+        
+        if fazendas:
+            obj_list += [faz for faz in fazendas]
+        if request.POST['fazendaId'] and fazendas:
+            fazenda = Fazenda.objects.get(pk=request.POST['fazendaId'])
+        else:
+            fazenda = ''
+        if fazenda != '':
+            obj_list.append(fazenda)
+
         obj_list.append(cliente)
+
         if pessoa.endereco_padrao:
             obj_list.append(pessoa.endereco_padrao)
-        
         if pessoa.email_padrao:
             obj_list.append(pessoa.email_padrao)
         if pessoa.telefone_padrao:
             obj_list.append(pessoa.telefone_padrao)
-
         if pessoa.tipo_pessoa == 'PJ':
             obj_list.append(pessoa.pessoa_jur_info)
         elif pessoa.tipo_pessoa == 'PF':
             obj_list.append(pessoa.pessoa_fis_info)
-
+        
         data = serializers.serialize('json', obj_list, fields=('indicador_ie', 'limite_de_credito', 'cnpj', 'inscricao_estadual', 'responsavel', 'cpf', 'rg', 'id_estrangeiro', 'logradouro', 'numero', 'bairro',
-                                                               'municipio', 'cmun', 'uf', 'pais', 'complemento', 'cep', 'email', 'telefone',))
-        print(data)
-
+                                                            'municipio', 'cmun', 'uf', 'pais', 'complemento', 'cep', 'email', 'telefone','fazenda', 'nome','endereco', 'complemento'))
+        #print(data)
         return HttpResponse(data, content_type='application/json')
 
 

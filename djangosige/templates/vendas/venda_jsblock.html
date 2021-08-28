@@ -16,3 +16,12 @@
     req_urls.info_pagamento_url = "{% url 'vendas:infocondpagamento' %}"
     $.Admin.vendaForm.init(req_urls);
   </script>
+  {% if fazenda_inicial %}
+  <script>
+    var fazenda_inicial = '{{ fazenda_inicial }}'
+  </script>
+  {% else %}
+  <script>
+    var fazenda_inicial = false
+  </script>
+  {% endif %}
