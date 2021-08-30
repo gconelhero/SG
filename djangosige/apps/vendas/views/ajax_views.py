@@ -20,6 +20,14 @@ class InfoVenda(View):
         pedido_dict['pk'] = venda.id
         pedido_fields_dict = {}
         pedido_fields_dict['dest'] = venda.cliente.id
+        try:
+            pedido_fields_dict['fazenda'] = venda.fazenda.id
+        except:
+            pass
+        try:
+            pedido_fields_dict['endereco'] = venda.endereco.pk
+        except:
+            pass
         pedido_fields_dict['local'] = venda.get_local_orig_id()
         pedido_fields_dict['status'] = venda.get_status_display()
         pedido_fields_dict['desconto'] = venda.format_desconto()

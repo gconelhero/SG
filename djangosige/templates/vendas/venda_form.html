@@ -149,12 +149,20 @@
             <!-- FAZENDA -->
             {% if form %}
             <label>Fazenda</label>
-            {% if form.cliente.errors %}<label class="error">{% for error in form.cliente.errors %}{{error}}{% endfor %}</label>{% endif %}
+            {% if form.fazenda.errors %}<label class="error">{% for error in form.fazenda.errors %}{{error}}{% endfor %}</label>{% endif %}
             <div class="input-group" style="margin-bottom: 0px;">
               <div class="form-line">
                 {{form.fazenda}}
               </div>
-              <a class="input-group-addon newwindow" style="color: green;" title="Adicionar cliente" href="{% url 'cadastro:addclienteview' %}"><i class="material-icons add-new-icon" title="Adicionar cliente">&#xE147;</i></a>
+              <a id='add_fazenda' class="input-group-addon newwindow" style="color: green;" title="Adicionar fazenda" href=""><i class="material-icons add-new-icon" title="Adicionar fazenda">&#xE147;</i></a>
+            </div>
+            <label>Endereço</label>
+            {% if form.endereco.errors %}<label class="error">{% for error in form.endereco.errors %}{{error}}{% endfor %}</label>{% endif %}
+            <div class="input-group" style="margin-bottom: 0px;">
+              <div class="form-line">
+                {{form.endereco}}
+              </div>
+              <a id='add_endereco' class="input-group-addon newwindow" style="color: green;" title="Adicionar endereço" href=""><i class="material-icons add-new-icon" title="Adicionar endereço">&#xE147;</i></a>
             </div>
             {% endif %}
           </div>

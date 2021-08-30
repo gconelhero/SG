@@ -90,13 +90,15 @@ class NotaFiscalSaidaForm(NotaFiscalForm):
     class Meta(NotaFiscalForm.Meta):
         model = NotaFiscalSaida
         fields = NotaFiscalForm.Meta.fields + ('n_nf_saida', 'tpnf', 'venda', 'emit_saida',
-                                               'dest_saida', 'n_fat', 'v_orig', 'v_desc', 'v_liq', 'grupo_cobr', 'arquivo_proc',)
+                                               'dest_saida', 'fazenda', 'endereco','n_fat', 'v_orig', 'v_desc', 'v_liq', 'grupo_cobr', 'arquivo_proc',)
         widgets = NotaFiscalForm.Meta.widgets
         widgets['n_nf_saida'] = forms.TextInput(
             attrs={'class': 'form-control'})
         widgets['venda'] = forms.Select(attrs={'class': 'form-control'})
         widgets['emit_saida'] = forms.Select(attrs={'class': 'form-control'})
         widgets['dest_saida'] = forms.Select(attrs={'class': 'form-control'})
+        widgets['fazenda'] = forms.Select(attrs={'class': 'form-control'})
+        widgets['endereco'] = forms.Select(attrs={'class': 'form-control'})
         widgets['n_fat'] = forms.TextInput(attrs={'class': 'form-control'})
         widgets['tpnf'] = forms.Select(attrs={'class': 'form-control'})
         widgets['v_orig'] = forms.TextInput(

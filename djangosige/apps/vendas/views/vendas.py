@@ -224,6 +224,8 @@ class EditarVendaView(CustomUpdateView):
         context = super(EditarVendaView, self).get_context_data(**kwargs)
         if self.object.fazenda:
             context['fazenda_inicial'] = self.object.fazenda.pk
+        if self.object.endereco:
+            context['endereco_inicial'] = self.object.endereco.pk
         return self.view_context(context)
 
     def get(self, request, form_class, *args, **kwargs):

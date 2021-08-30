@@ -11,7 +11,7 @@ from djangosige.apps.base.views_mixins import FormValidationMessageMixin
 from djangosige.apps.fiscal.forms import NotaFiscalSaidaForm, NotaFiscalEntradaForm, AutXMLFormSet, ConfiguracaoNotaFiscalForm, EmissaoNotaFiscalForm, CancelamentoNotaFiscalForm, \
     ConsultarCadastroForm, InutilizarNotasForm, ConsultarNotaForm, BaixarNotaForm, ManifestacaoDestinatarioForm
 from djangosige.apps.fiscal.models import NotaFiscalSaida, NotaFiscalEntrada, NotaFiscal, ConfiguracaoNotaFiscal, AutXML, ErrosValidacaoNotaFiscal, RespostaSefazNotaFiscal
-from djangosige.apps.cadastro.models import MinhaEmpresa
+from djangosige.apps.cadastro.models import MinhaEmpresa, Fazenda
 from djangosige.apps.login.models import Usuario
 from djangosige.apps.vendas.models import PedidoVenda, ItensVenda
 
@@ -219,6 +219,10 @@ class EditarNotaFiscalSaidaView(EditarNotaFiscalView):
     def view_context(self, context):
         context['title_complete'] = 'EDITAR NOTA FISCAL DE SAÍDA ' + \
             str(self.object.serie) + '/' + str(self.object.n_nf_saida)
+        if self.object.fazenda:
+            context['fazenda_inicial'] = self.object.fazenda.pk
+        if self.object.endereco:
+            context['endereco_inicial'] = self.object.endereco.pk
         context['return_url'] = reverse_lazy('fiscal:listanotafiscalsaidaview')
         context['saida'] = True
         return context
@@ -311,12 +315,17 @@ class EditarNotaFiscalEntradaView(EditarNotaFiscalView):
 
 
 # Gerar nota fiscal a partir de um pedido de venda
+# Valores Iniciais do botão de venda Gerar Nota
 class GerarNotaFiscalSaidaView(CustomView):
     permission_codename = ['add_notafiscalsaida', 'change_notafiscalsaida']
 
     def get(self, request, *args, **kwargs):
         pedido_id = kwargs.get('pk', None)
         pedido = PedidoVenda.objects.get(id=pedido_id)
+        if pedido.fazenda:
+            fazenda = pedido.fazenda
+        if pedido.endereco:
+            fazenda = pedido.endereco
 
         nova_nota = NotaFiscalSaida()
 
@@ -362,6 +371,8 @@ class GerarNotaFiscalSaidaView(CustomView):
             pass
 
         nova_nota.dest_saida = pedido.cliente
+        nova_nota.fazenda = pedido.fazenda
+        nova_nota.endereco = pedido.endereco
         nova_nota.save()
 
         return redirect(reverse_lazy('fiscal:editarnotafiscalsaidaview', kwargs={'pk': nova_nota.id}))

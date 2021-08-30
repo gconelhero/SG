@@ -387,6 +387,24 @@
                   </div>
                   <a class="input-group-addon newwindow" style="color: green;" title="Adicionar Cliente" href="{% url 'cadastro:addclienteview' %}"><i class="material-icons add-new-icon" title="Adicionar Cliente">&#xE147;</i></a>
                 </div>
+                
+                <label>{{form.fazenda.label}}</label>{% if form.fazenda.field.required %}<strong style="color:red;"> *</strong>{% endif %}
+                {% if form.fazenda.errors %}<label class="error">{% for error in form.fazenda.errors %}{{error}}{% endfor %}</label>{% endif %}
+                <div class="input-group">
+                  <div class="form-line">
+                    {{form.fazenda}}
+                  </div>
+                  <a id="add_fazenda" class="input-group-addon newwindow" style="color: green;" title="Adicionar Fazenda" href=""><i class="material-icons add-new-icon" title="Adicionar Fazenda">&#xE147;</i></a>
+                </div>
+              </div>
+              <label>Tipo de endereço</label>{% if form.endereco.field.required %}<strong style="color:red;"> *</strong>{% endif %}
+                {% if form.endereco.errors %}<label class="error">{% for error in form.endereco.errors %}{{error}}{% endfor %}</label>{% endif %}
+                <div class="input-group">
+                  <div class="form-line">
+                    {{form.endereco}}
+                  </div>
+                  <a id="add_endereco" class="input-group-addon newwindow" style="color: green;" title="Adicionar Endereço" href=""><i class="material-icons add-new-icon" title="Adicionar Endereço">&#xE147;</i></a>
+                </div>
 
                 {% elif entrada %}
 
@@ -401,7 +419,6 @@
 
                 {% endif %}
 
-              </div>
             </div>
             
             <div class="col-sm-4">

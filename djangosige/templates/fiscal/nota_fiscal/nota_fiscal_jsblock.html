@@ -30,3 +30,22 @@
   	$.Admin.notaFiscalForm.init(req_urls, tipo_nf);
   	$.Admin.maskInput.maskNotaFiscal();  
 </script>
+{% if fazenda_inicial %}
+<script>
+var fazenda_inicial = '{{ fazenda_inicial }}'
+</script>
+{% else %}
+<script>
+var fazenda_inicial = false
+</script>
+{% endif %}
+
+{% if endereco_inicial %}
+<script>
+var endereco_inicial = '{{ endereco_inicial }}'
+</script>
+{% else %}
+<script>
+var endereco_inicial = false
+</script>
+{% endif %}

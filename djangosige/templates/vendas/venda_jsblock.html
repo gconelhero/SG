@@ -15,13 +15,23 @@
     req_urls.info_produto_url = "{% url 'cadastro:infoproduto' %}"
     req_urls.info_pagamento_url = "{% url 'vendas:infocondpagamento' %}"
     $.Admin.vendaForm.init(req_urls);
-  </script>
+</script>
   {% if fazenda_inicial %}
-  <script>
-    var fazenda_inicial = '{{ fazenda_inicial }}'
-  </script>
-  {% else %}
-  <script>
-    var fazenda_inicial = false
-  </script>
-  {% endif %}
+<script>
+  var fazenda_inicial = '{{ fazenda_inicial }}'
+</script>
+{% else %}
+<script>
+  var fazenda_inicial = false
+</script>
+{% endif %}
+
+{% if endereco_inicial %}
+<script>
+  var endereco_inicial = '{{ endereco_inicial }}'
+</script>
+{% else %}
+<script>
+  var endereco_inicial = false
+</script>
+{% endif %}

@@ -183,6 +183,10 @@ class NotaFiscalSaida(NotaFiscal):
         'cadastro.Empresa', related_name="emit_nfe_saida", on_delete=models.SET_NULL, null=True, blank=True)
     dest_saida = models.ForeignKey(
         'cadastro.Cliente', related_name="dest_nfe_saida", on_delete=models.SET_NULL, null=True, blank=True)
+    fazenda = models.ForeignKey(
+        'cadastro.Fazenda', related_name="fazenda", on_delete=models.SET_NULL, null=True, blank=True)
+    endereco = models.ForeignKey(
+        'cadastro.Endereco', related_name="endereco", on_delete=models.SET_NULL, null=True, blank=True)
 
     # Cobranca Fatura(NF-e)
     n_fat = models.CharField(max_length=60, null=True, blank=True, unique=True)

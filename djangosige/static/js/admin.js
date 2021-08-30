@@ -1009,6 +1009,7 @@ $.Admin.vendaForm = {
         var _this = this;
         var cli_input = $('#id_cliente');
         var faz_input = $('#id_fazenda');
+        var end_input = $('#id_endereco');
         var transportadora_input = $('#id_transportadora')
         var cond_pag_input = $('#id_cond_pagamento');
         var produtos_input = $('select.select-produto');
@@ -1036,19 +1037,30 @@ $.Admin.vendaForm = {
 
         cli_input.on('change', function(){
             $('#id_fazenda option').remove();
+            $('#id_endereco option').remove();
             $('#id_fazenda').append($('<option></option>').prop("value","").text('---------'));
+            $('#id_endereco').append($('<option></option>').prop("value","").text('---------'));
             if($(this).val()){
                 var postData = {
                     'pessoaId': $(this).val(),
                     'fazendaId': faz_input.val(),
+                    'enderecoId': end_input.val(),
                 }
+                $('a[id$=add_fazenda]').removeClass('hidden');
+                $('a[id$=add_endereco]').removeClass('hidden');
+                document.getElementById('add_fazenda').href = "/cadastro/cliente/editar/"+$(this).val();
+                document.getElementById('add_endereco').href = "/cadastro/cliente/editar/"+$(this).val();
                 $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_cliente_url'], postData, _this.handleClienteInfo);
             }else{
                 _this.handleClienteInfo();
             }
             if($(this).val() === ''){
                 $('#id_fazenda option').remove();
+                $('#id_endereco option').remove();
                 $('#id_fazenda').append($('<option></option>').prop("value","").text('---------'));
+                $('#id_endereco').append($('<option></option>').prop("value","").text('---------'));
+                $('a[id$=add_fazenda]').addClass('hidden');
+                $('a[id$=add_endereco]').addClass('hidden');
             }
         });
         
@@ -1057,6 +1069,7 @@ $.Admin.vendaForm = {
                 var postData = {
                     'fazendaId': $(this).val(),
                     'pessoaId': cli_input.val(),
+                    'enderecoId': end_input.val(),
                 }
                 $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_cliente_url'], postData, _this.handleClienteInfo);
             }else{
@@ -1067,6 +1080,7 @@ $.Admin.vendaForm = {
                 var postData = {
                     'fazendaId': $(this).val(),
                     'pessoaId': cli_input.val(),
+                    'enderecoId': end_input.val(),
                 }
             }
             if(postData['pessoaId'] !== '') {
@@ -1076,8 +1090,34 @@ $.Admin.vendaForm = {
             }
         });
         
+        end_input.on('change', function(){
+            if($(this).val()){
+                var postData = {
+                    'fazendaId': faz_input.val(),
+                    'pessoaId': cli_input.val(),
+                    'enderecoId': $(this).val(),
+                }
+                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_cliente_url'], postData, _this.handleClienteInfo);
+            }else{
+                _this.handleClienteInfo();
+            }
+            
+            if($(this).val() === '') {
+                var postData = {
+                    'fazendaId': faz_input.val(),
+                    'pessoaId': cli_input.val(),
+                    'enderecoId': $(this).val(),
+                }
+            }
+            if(postData['pessoaId'] !== '') {
+                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_cliente_url'], postData, _this.handleClienteInfo);
+            }else{
+                _this.handleClienteInfo();
+            }
+        });
         cli_input.change();
         faz_input.change();
+        end_input.change();
 
         transportadora_input.on('change', function(){
             if($(this).val()){
@@ -2117,6 +2157,39 @@ $.Admin.vendaForm = {
                 fazenda_inicial = false
             }
             
+            var enderecos = []
+            var select_options_end = []
+            for (var i = 0; i < $('#id_endereco').prop('options').length; i++){
+                if ($('#id_endereco option')[i].value !== '') {
+                    select_options_end.push(($('#id_endereco option')[i].value));
+                    select_options_end = select_options_end.map(i=>Number(i));   
+                }
+            }
+                for(var i = 0; i < data.length; i++) {
+                if(data[i].model == 'cadastro.endereco'){
+                    enderecos.push(data[i]);
+                }
+            }
+
+            if (enderecos.length < 1){
+                $('#id_endereco option').remove();
+            }
+            
+            if($('#id_endereco').prop('options').length == 0){
+                $('#id_endereco').append($('<option></option>').prop("value","").text('---------'));
+            }
+            
+            for(var i = 0; i < enderecos.length; i++){
+                if ($('#id_endereco').prop('options').length < enderecos.length && select_options_end.includes(enderecos[i].pk) === false){
+                    $('#id_endereco').append($('<option></option>').prop("value",enderecos[i].pk).text(enderecos[i].fields.tipo_endereco));
+                }
+            }
+            
+            if(endereco_inicial !== false){
+                $('#id_endereco').val(endereco_inicial)
+                endereco_inicial = false
+            }
+
             for(var i = 0; i < data.length; i++) {
                 
                 if(data[i].model == 'cadastro.pessoajuridica'){
@@ -2162,6 +2235,21 @@ $.Admin.vendaForm = {
                     if($('#id_fazenda').val()){
                         var fazenda_pk = $('#id_fazenda').val();
                         if(data[i].pk === Number(fazenda_pk)){
+                            $('#ie_rg_cliente').text(data[i].fields.inscricao_estadual);
+                            $('#uf_cliente').text(data[i].fields.uf);
+                            $('#bairro_cliente').text(data[i].fields.bairro);
+                            $('#municipio_cliente').text(data[i].fields.municipio);
+                            $('#cep_cliente').text(data[i].fields.cep);
+                            $('#endereco_cliente').text(data[i].fields.endereco);
+                        }
+                    }    
+                }                    
+            }
+            for(var i = 0; i < data.length; i++) {
+                if(data[i].model == 'cadastro.endereco'){
+                    if($('#id_endereco').val()){
+                        var endereco_pk = $('#id_endereco').val();
+                        if(data[i].pk === Number(endereco_pk)){
                             $('#ie_rg_cliente').text(data[i].fields.inscricao_estadual);
                             $('#uf_cliente').text(data[i].fields.uf);
                             $('#bairro_cliente').text(data[i].fields.bairro);
@@ -2985,13 +3073,16 @@ $.Admin.lancamentoList = {
     },
 }
 
-
+var fazenda_nota = ""
+var endereco_nota = ""
 $.Admin.notaFiscalForm = {
     init: function(req_urls, tipo_nf) {
         var _this = this;
         if(tipo_nf == 'saida'){
             var emit_input = $('#id_emit_saida');
             var dest_input = $('#id_dest_saida');
+            var faz_input = $('#id_fazenda');
+            var end_input = $('#id_endereco');
             var transacao_input = $('#id_venda');
         }else if(tipo_nf == 'entrada'){
             var emit_input = $('#id_emit_entrada');
@@ -3031,16 +3122,93 @@ $.Admin.notaFiscalForm = {
 
         //Ajax request destinatario(cliente ou empresa)
         dest_input.on('change', function(){
+            $('#id_fazenda option').remove();
+            $('#id_endereco option').remove();
+            $('#id_fazenda').append($('<option></option>').prop("value","").text('---------'));
+            $('#id_endereco').append($('<option></option>').prop("value","").text('---------'));
             if($(this).val()){
                 var postData = {
                     'pessoaId': $(this).val(),
+                    'fazendaId': $('#id_fazenda').val(),
+                    'enderecoId': end_input.val(),
+                    
                 }
+                $('a[id$=add_fazenda]').removeClass('hidden');
+                $('a[id$=add_endereco]').removeClass('hidden');
+                document.getElementById('add_fazenda').href = "/cadastro/cliente/editar/"+$(this).val();
+                document.getElementById('add_endereco').href = "/cadastro/cliente/editar/"+$(this).val();
                 $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_dest_url'], postData, _this.handleDestInfo);
             }else{
                 _this.handleEmitInfo();
             }
+            if($(this).val() === ''){
+                $('#id_fazenda option').remove();
+                $('#id_endereco option').remove();
+                $('#id_fazenda').append($('<option></option>').prop("value","").text('---------'));
+                $('#id_endereco').append($('<option></option>').prop("value","").text('---------'));
+                $('a[id$=add_fazenda]').addClass('hidden');
+                $('a[id$=add_endereco]').addClass('hidden');
+            }
         });
+        faz_input.on('change', function(){
+            if($(this).val()){
+                var postData = {
+                    'fazendaId': $(this).val(),
+                    'pessoaId': dest_input.val(),
+                    'enderecoId': end_input.val(),
+                    
+                    
+                }
+                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_dest_url'], postData, _this.handleDestInfo);                
+            }else{
+                _this.handleEmitInfo();
+            }
+            
+            if($(this).val() === '') {
+                var postData = {
+                    'fazendaId': $(this).val(),
+                    'pessoaId': dest_input.val(),
+                    'enderecoId': end_input.val(),
+                    
+                }
+            }
+            if(postData['pessoaId'] !== '') {
+                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_dest_url'], postData, _this.handleDestInfo);
+            }else{
+                _this.handleEmitInfo();
+            }
+            
+        });
+        end_input.on('change', function(){
+            if($(this).val()){
+                var postData = {
+                    'fazendaId': faz_input.val(),
+                    'pessoaId': dest_input.val(),
+                    'enderecoId': $(this).val(),
+                }
+                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_dest_url'], postData, _this.handleDestInfo);                
+            }else{
+                _this.handleEmitInfo();
+            }
+            
+            if($(this).val() === '') {
+                var postData = {
+                    'fazendaId': faz_input.val(),
+                    'pessoaId': dest_input.val(),
+                    'enderecoId': $(this).val(),
+                }
+            }
+            if(postData['pessoaId'] !== '') {
+                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_dest_url'], postData, _this.handleDestInfo);
+            }else{
+                _this.handleEmitInfo();
+            }
+            
+        });
+
         dest_input.change();
+        faz_input.change();
+        end_input.change();
 
         //Ajax request Transacao: venda ou compra
         transacao_input.on('change', function(event, initial){
@@ -3155,6 +3323,83 @@ $.Admin.notaFiscalForm = {
             $('#cpf_cnpj_id_dest').text('');
         }else{
             $('.display-dest-field').text('');
+            // TRATANDO FAZENDAS EM VENDAS
+            var fazendas = []
+            var select_options = []
+            for (var i = 0; i < $('#id_fazenda').prop('options').length; i++){
+                if ($('#id_fazenda option')[i].value !== '') {
+                    select_options.push(($('#id_fazenda option')[i].value));
+                    select_options = select_options.map(i=>Number(i));   
+                }
+            }
+
+            for(var i = 0; i < data.length; i++) {
+                if(data[i].model == 'cadastro.fazenda'){
+                    fazendas.push(data[i]);
+                }
+            }
+
+            if (fazendas.length < 1){
+                $('#id_fazenda option').remove();
+            }
+            
+            if($('#id_fazenda').prop('options').length == 0){
+                $('#id_fazenda').append($('<option></option>').prop("value","").text('---------'));
+            }
+            
+            for(var i = 0; i < fazendas.length; i++){
+                if ($('#id_fazenda').prop('options').length < fazendas.length + 1 && select_options.includes(data[i].pk) === false){
+                    $('#id_fazenda').append($('<option></option>').prop("value",fazendas[i].pk).text(fazendas[i].fields.nome));
+                }
+            }
+            
+            if(fazenda_inicial !== false){
+                $('#id_fazenda').val(fazenda_inicial)
+                fazenda_inicial = false
+            }
+            if(fazenda_nota !== ''){
+                $('#id_fazenda').val(fazenda_nota)
+                fazenda_nota = ''
+            }
+
+            var enderecos = []
+            var select_options_end = []
+            for (var i = 0; i < $('#id_endereco').prop('options').length; i++){
+                if ($('#id_endereco option')[i].value !== '') {
+                    select_options_end.push(($('#id_endereco option')[i].value));
+                    select_options_end = select_options_end.map(i=>Number(i));   
+                }
+            }
+
+            for(var i = 0; i < data.length; i++) {
+                if(data[i].model == 'cadastro.endereco'){
+                    enderecos.push(data[i]);
+                }
+            }
+
+            if (enderecos.length < 1){
+                $('#id_endereco option').remove();
+            }
+            
+            if($('#id_endereco').prop('options').length == 0){
+                $('#id_endereco').append($('<option></option>').prop("value","").text('---------'));
+            }
+            
+            for(var i = 0; i < enderecos.length; i++){
+                if ($('#id_endereco').prop('options').length < enderecos.length && select_options_end.includes(enderecos[i].pk) === false){
+                    $('#id_endereco').append($('<option></option>').prop("value",enderecos[i].pk).text(enderecos[i].fields.tipo_endereco));
+                }
+            }
+            
+            if(endereco_inicial !== false){
+                $('#id_endereco').val(endereco_inicial)
+                endereco_inicial = false
+            }
+            if(endereco_nota !== ''){
+                $('#id_endereco').val(endereco_nota)
+                endereco_nota = ''
+            }
+        
             for(var i = 0; i < data.length; i++) {
                 if(data[i].model == 'cadastro.pessoajuridica'){
                     $('#cpf_cnpj_id_dest').text(data[i].fields.cnpj);
@@ -3178,6 +3423,8 @@ $.Admin.notaFiscalForm = {
                     }
                 }
 
+
+                
                 if(data[i].model == 'cadastro.endereco'){
                     $('#endereco_dest').text(data[i].fields.logradouro);
                     $('#nro_dest').text(data[i].fields.numero);
@@ -3198,8 +3445,45 @@ $.Admin.notaFiscalForm = {
                     $('#tel_dest').text(data[i].fields.telefone);
                 }
             }
+            for(var i = 0; i < data.length; i++) {
+                if(data[i].model == 'cadastro.fazenda'){
+                    if($('#id_fazenda').val()){
+                        var fazenda_pk = $('#id_fazenda').val();
+                        if(data[i].pk === Number(fazenda_pk)){
+                            $('#ie_rg_dest').text(data[i].fields.inscricao_estadual);
+                            $('#estado_dest').text(data[i].fields.uf);
+                            $('#bairro_dest').text(data[i].fields.bairro);
+                            $('#cidade_dest').text(data[i].fields.municipio);
+                            $('#cmun_dest').text(data[i].fields.cmun);
+                            $('#cep_dest').text(data[i].fields.cep);
+                            $('#endereco_dest').text(data[i].fields.endereco);
+                            if($('#id_endereco').val() == ''){
+                                $('#nro_dest').text("");
+                            }
+                            
+                        }
+                    }    
+                }      
+            }
+            for(var i = 0; i < data.length; i++) {
+                if(data[i].model == 'cadastro.endereco'){
+                    if($('#id_endereco').val()){
+                        var endereco_pk = $('#id_endereco').val();
+                        if(data[i].pk === Number(endereco_pk)){
+                            $('#estado_dest').text(data[i].fields.uf);
+                            $('#bairro_dest').text(data[i].fields.bairro);
+                            $('#cidade_dest').text(data[i].fields.municipio);
+                            $('#cmun_dest').text(data[i].fields.cmun);
+                            $('#cep_dest').text(data[i].fields.cep);
+                            $('#endereco_dest').text(data[i].fields.endereco);
+                            $('#nro_dest').text(data[i].fields.endereco);
+                        }
+                    }    
+                }                    
+            }
         }
     },
+    
 
     handleVendaInfo: function(data, initial){
         if(typeof data === 'undefined' || !data){
@@ -3210,7 +3494,9 @@ $.Admin.notaFiscalForm = {
             $('.display-venda-field').text('');
             $('#itens_table > tbody').empty();
             $('#pagamentos_tabela > tbody').empty();
+
             for(var i = 0; i < data.length; i++) {
+                // parou aqui
                 if(data[i].model == 'vendas.itensvenda'){
                     var itens_venda_id = data[i].pk
                     var new_tr = "<tr class=\"itens_row\" id=\"" + itens_venda_id + "\">";
@@ -3247,7 +3533,14 @@ $.Admin.notaFiscalForm = {
                     new_tr += "</tr>";
                     $('#itens_table > tbody').append(new_tr);
                 }else if(data[i].model == 'vendas.pedidovenda'){
-                    if(data[i].fields.dest && !initial) $('#id_dest').val(data[i].fields.dest).change();
+                    if(data[i].fields.dest && !initial){
+                        $('#id_dest').val(data[i].fields.dest).change();
+                        window.fazenda_nota = data[i].fields.fazenda
+                        //window.endereco_nota = data[i].fields.endereco
+                        
+                        
+                    }
+                    
                     $('#status_venda').text(data[i].fields.status);
                     $('#desconto_venda').text(data[i].fields.desconto);
                     $('#frete_venda').text(data[i].fields.frete);
@@ -3265,7 +3558,7 @@ $.Admin.notaFiscalForm = {
                         $('#id_v_desc').val(data[i].fields.desconto);
                         $('#id_v_liq').val(data[i].fields.valor_total);
                         $('#id_dest_saida').val(data[i].fields.dest).change();
-
+                        
                         if(data[i].fields.n_parcelas <= 1){
                             $('select[id=id_indpag]').val("0");
                         }else{

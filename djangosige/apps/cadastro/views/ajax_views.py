@@ -5,17 +5,19 @@ from django.http import HttpResponse
 from django.core import serializers
 from django.core.cache import cache
 
-from djangosige.apps.cadastro.models import Pessoa, Fazenda, Cliente, Fornecedor, Transportadora, Produto
+from djangosige.apps.cadastro.models import Pessoa, Fazenda, Cliente, Fornecedor, Transportadora, Produto, Endereco
 from djangosige.apps.fiscal.models import ICMS, ICMSSN, IPI, ICMSUFDest, GrupoFiscal
 
 class InfoCliente(View):
 
     def post(self, request, *args, **kwargs):
         obj_list = []
+        print(request.POST)
         pessoa = Pessoa.objects.get(pk=request.POST['pessoaId'])
         cliente = Cliente.objects.get(pk=request.POST['pessoaId'])
         fazendas = Fazenda.objects.all().filter(pessoa_faz=request.POST['pessoaId'])
-        
+        enderecos = Endereco.objects.all().filter(pessoa_end=request.POST['pessoaId'])
+
         if fazendas:
             obj_list += [faz for faz in fazendas]
         if request.POST['fazendaId'] and fazendas:
@@ -24,7 +26,15 @@ class InfoCliente(View):
             fazenda = ''
         if fazenda != '':
             obj_list.append(fazenda)
-
+        
+        if enderecos:
+            obj_list += [end for end in enderecos]
+        if request.POST['enderecoId'] and enderecos:
+            print("BLAAAA")
+            endereco = Endereco.objects.get(pk=request.POST['enderecoId'])
+            print(endereco)
+        
+        
         obj_list.append(cliente)
 
         if pessoa.endereco_padrao:
@@ -39,8 +49,8 @@ class InfoCliente(View):
             obj_list.append(pessoa.pessoa_fis_info)
         
         data = serializers.serialize('json', obj_list, fields=('indicador_ie', 'limite_de_credito', 'cnpj', 'inscricao_estadual', 'responsavel', 'cpf', 'rg', 'id_estrangeiro', 'logradouro', 'numero', 'bairro',
-                                                            'municipio', 'cmun', 'uf', 'pais', 'complemento', 'cep', 'email', 'telefone','fazenda', 'nome','endereco', 'complemento'))
-        #print(data)
+                                                            'municipio', 'cmun', 'uf', 'pais', 'complemento', 'cep', 'email', 'telefone','fazenda', 'nome','endereco', 'complemento', 'tipo_endereco'))
+        print(data)
         return HttpResponse(data, content_type='application/json')
 
 

@@ -285,6 +285,8 @@ class Venda(models.Model):
         'cadastro.Cliente', related_name="venda_cliente", on_delete=models.CASCADE)
     fazenda = models.ForeignKey(
         'cadastro.Fazenda', related_name="venda_fazenda", null=True, blank=True, on_delete=models.CASCADE)
+    endereco = models.ForeignKey(
+        'cadastro.Endereco', related_name="venda_endereco", null=True, blank=True, on_delete=models.CASCADE)
     ind_final = models.BooleanField(default=False)
     # Transporte
     transportadora = models.ForeignKey(
