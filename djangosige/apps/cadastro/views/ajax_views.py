@@ -30,10 +30,7 @@ class InfoCliente(View):
         if enderecos:
             obj_list += [end for end in enderecos]
         if request.POST['enderecoId'] and enderecos:
-            print("BLAAAA")
             endereco = Endereco.objects.get(pk=request.POST['enderecoId'])
-            print(endereco)
-        
         
         obj_list.append(cliente)
 
@@ -92,7 +89,7 @@ class InfoEmpresa(View):
 
         data = serializers.serialize('json', obj_list, fields=('cnpj', 'inscricao_estadual', 'logradouro', 'numero', 'bairro',
                                                                'municipio', 'cmun', 'uf', 'pais', 'complemento', 'cep',))
-
+        
         return HttpResponse(data, content_type='application/json')
 
 

@@ -192,6 +192,13 @@ class PessoaFisica(models.Model):
             return 'RG: {}'.format(self.rg)
         else:
             return ''
+    
+    @property
+    def format_faz(self):
+        if self.rg:
+            return 'IE: {}'.format(self.rg)
+        else:
+            return ''
 
 
 class PessoaJuridica(models.Model):

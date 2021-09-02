@@ -29,15 +29,15 @@
               {% endif %}
             </div>
             <div><small>Campos marcados com <strong style="color:red;">*</strong> são obrigatórios.</small></div>
-
+            
           </div>
           <!--# Header-->
 
           <form id="venda_form_edit" role="form" action="" method="post">
             {% csrf_token %}
-            
-            {% include 'vendas/venda_form.html' %}
 
+            {% include 'vendas/venda_form.html' %}
+            
           </form>
 
         </div>

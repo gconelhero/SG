@@ -375,10 +375,9 @@
           <h4 style="border-bottom: 1px solid #afabab;margin-bottom: 25px;">Destinatário</h4>
           <div class="col-sm-12">
             <div class="col-sm-4">
-              <div class="form-group">
 
                 {% if saida %}
-
+                <div class="form-group">
                 <label>{{form.dest_saida.label}}</label>{% if form.dest_saida.field.required %}<strong style="color:red;"> *</strong>{% endif %}
                 {% if form.dest_saida.errors %}<label class="error">{% for error in form.dest_saida.errors %}{{error}}{% endfor %}</label>{% endif %}
                 <div class="input-group">

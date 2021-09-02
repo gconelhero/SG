@@ -3121,94 +3121,114 @@ $.Admin.notaFiscalForm = {
         fat_dup_chk.change();
 
         //Ajax request destinatario(cliente ou empresa)
-        dest_input.on('change', function(){
-            $('#id_fazenda option').remove();
-            $('#id_endereco option').remove();
-            $('#id_fazenda').append($('<option></option>').prop("value","").text('---------'));
-            $('#id_endereco').append($('<option></option>').prop("value","").text('---------'));
-            if($(this).val()){
-                var postData = {
-                    'pessoaId': $(this).val(),
-                    'fazendaId': $('#id_fazenda').val(),
-                    'enderecoId': end_input.val(),
-                    
-                }
-                $('a[id$=add_fazenda]').removeClass('hidden');
-                $('a[id$=add_endereco]').removeClass('hidden');
-                document.getElementById('add_fazenda').href = "/cadastro/cliente/editar/"+$(this).val();
-                document.getElementById('add_endereco').href = "/cadastro/cliente/editar/"+$(this).val();
-                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_dest_url'], postData, _this.handleDestInfo);
-            }else{
-                _this.handleEmitInfo();
-            }
-            if($(this).val() === ''){
+        if(tipo_nf == 'saida'){
+            dest_input.on('change', function(){
                 $('#id_fazenda option').remove();
                 $('#id_endereco option').remove();
                 $('#id_fazenda').append($('<option></option>').prop("value","").text('---------'));
                 $('#id_endereco').append($('<option></option>').prop("value","").text('---------'));
-                $('a[id$=add_fazenda]').addClass('hidden');
-                $('a[id$=add_endereco]').addClass('hidden');
-            }
-        });
-        faz_input.on('change', function(){
-            if($(this).val()){
-                var postData = {
-                    'fazendaId': $(this).val(),
-                    'pessoaId': dest_input.val(),
-                    'enderecoId': end_input.val(),
-                    
-                    
+                if($(this).val()){
+                    var postData = {
+                        'pessoaId': $(this).val(),
+                        'fazendaId': $('#id_fazenda').val(),
+                        'enderecoId': end_input.val(),
+                        
+                    }
+                    $('a[id$=add_fazenda]').removeClass('hidden');
+                    $('a[id$=add_endereco]').removeClass('hidden');
+                    document.getElementById('add_fazenda').href = "/cadastro/cliente/editar/"+$(this).val();
+                    document.getElementById('add_endereco').href = "/cadastro/cliente/editar/"+$(this).val();
+                    $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_dest_url'], postData, _this.handleDestInfo);
+                }else{
+                    _this.handleEmitInfo();
                 }
-                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_dest_url'], postData, _this.handleDestInfo);                
-            }else{
-                _this.handleEmitInfo();
-            }
-            
-            if($(this).val() === '') {
-                var postData = {
-                    'fazendaId': $(this).val(),
-                    'pessoaId': dest_input.val(),
-                    'enderecoId': end_input.val(),
-                    
+                if($(this).val() === ''){
+                    $('#id_fazenda option').remove();
+                    $('#id_endereco option').remove();
+                    $('#id_fazenda').append($('<option></option>').prop("value","").text('---------'));
+                    $('#id_endereco').append($('<option></option>').prop("value","").text('---------'));
+                    $('a[id$=add_fazenda]').addClass('hidden');
+                    $('a[id$=add_endereco]').addClass('hidden');
                 }
-            }
-            if(postData['pessoaId'] !== '') {
-                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_dest_url'], postData, _this.handleDestInfo);
-            }else{
-                _this.handleEmitInfo();
-            }
+            });
             
-        });
-        end_input.on('change', function(){
-            if($(this).val()){
-                var postData = {
-                    'fazendaId': faz_input.val(),
-                    'pessoaId': dest_input.val(),
-                    'enderecoId': $(this).val(),
+            faz_input.on('change', function(){
+                if($(this).val()){
+                    var postData = {
+                        'fazendaId': $(this).val(),
+                        'pessoaId': dest_input.val(),
+                        'enderecoId': end_input.val(),
+                        
+                        
+                    }
+                    $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_dest_url'], postData, _this.handleDestInfo);                
+                }else{
+                    _this.handleEmitInfo();
                 }
-                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_dest_url'], postData, _this.handleDestInfo);                
-            }else{
-                _this.handleEmitInfo();
-            }
-            
-            if($(this).val() === '') {
-                var postData = {
-                    'fazendaId': faz_input.val(),
-                    'pessoaId': dest_input.val(),
-                    'enderecoId': $(this).val(),
+                
+                if($(this).val() === '') {
+                    var postData = {
+                        'fazendaId': $(this).val(),
+                        'pessoaId': dest_input.val(),
+                        'enderecoId': end_input.val(),
+                        
+                    }
                 }
-            }
-            if(postData['pessoaId'] !== '') {
-                $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_dest_url'], postData, _this.handleDestInfo);
-            }else{
-                _this.handleEmitInfo();
-            }
-            
-        });
+                if(postData['pessoaId'] !== '') {
+                    $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_dest_url'], postData, _this.handleDestInfo);
+                }else{
+                    _this.handleEmitInfo();
+                }
+                
+            });
 
+            
+            end_input.on('change', function(){
+                if($(this).val()){
+                    var postData = {
+                        'fazendaId': faz_input.val(),
+                        'pessoaId': dest_input.val(),
+                        'enderecoId': $(this).val(),
+                    }
+                    $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_dest_url'], postData, _this.handleDestInfo);                
+                }else{
+                    _this.handleEmitInfo();
+                }
+                
+                if($(this).val() === '') {
+                    var postData = {
+                        'fazendaId': faz_input.val(),
+                        'pessoaId': dest_input.val(),
+                        'enderecoId': $(this).val(),
+                    }
+                }
+                if(postData['pessoaId'] !== '') {
+                    $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_dest_url'], postData, _this.handleDestInfo);
+                }else{
+                    _this.handleEmitInfo();
+                }
+                
+            });
+
+            faz_input.change();
+            end_input.change();
+            
+        }else if(tipo_nf == 'entrada'){
+            dest_input.on('change', function(){
+                if($(this).val()){
+                    var postData = {
+                        'pessoaId': $(this).val(),
+                        
+                    }
+                    $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_dest_url'], postData, _this.handleDestInfo);
+                }else{
+                    _this.handleEmitInfo();
+                }
+            });
+        }
+        
         dest_input.change();
-        faz_input.change();
-        end_input.change();
+        
 
         //Ajax request Transacao: venda ou compra
         transacao_input.on('change', function(event, initial){
@@ -3323,82 +3343,86 @@ $.Admin.notaFiscalForm = {
             $('#cpf_cnpj_id_dest').text('');
         }else{
             $('.display-dest-field').text('');
-            // TRATANDO FAZENDAS EM VENDAS
-            var fazendas = []
-            var select_options = []
-            for (var i = 0; i < $('#id_fazenda').prop('options').length; i++){
-                if ($('#id_fazenda option')[i].value !== '') {
-                    select_options.push(($('#id_fazenda option')[i].value));
-                    select_options = select_options.map(i=>Number(i));   
+            if(tipo_nf == 'saida'){
+                // TRATANDO FAZENDAS EM VENDAS
+                var fazendas = []
+                var select_options = []
+                for (var i = 0; i < $('#id_fazenda').prop('options').length; i++){
+                    if ($('#id_fazenda option')[i].value !== '') {
+                        select_options.push(($('#id_fazenda option')[i].value));
+                        select_options = select_options.map(i=>Number(i));   
+                    }
                 }
-            }
 
-            for(var i = 0; i < data.length; i++) {
-                if(data[i].model == 'cadastro.fazenda'){
-                    fazendas.push(data[i]);
+                for(var i = 0; i < data.length; i++) {
+                    if(data[i].model == 'cadastro.fazenda'){
+                        fazendas.push(data[i]);
+                    }
                 }
-            }
 
-            if (fazendas.length < 1){
-                $('#id_fazenda option').remove();
-            }
-            
-            if($('#id_fazenda').prop('options').length == 0){
-                $('#id_fazenda').append($('<option></option>').prop("value","").text('---------'));
-            }
-            
-            for(var i = 0; i < fazendas.length; i++){
-                if ($('#id_fazenda').prop('options').length < fazendas.length + 1 && select_options.includes(data[i].pk) === false){
-                    $('#id_fazenda').append($('<option></option>').prop("value",fazendas[i].pk).text(fazendas[i].fields.nome));
+                if (fazendas.length < 1){
+                    $('#id_fazenda option').remove();
                 }
-            }
-            
-            if(fazenda_inicial !== false){
-                $('#id_fazenda').val(fazenda_inicial)
-                fazenda_inicial = false
-            }
-            if(fazenda_nota !== ''){
-                $('#id_fazenda').val(fazenda_nota)
-                fazenda_nota = ''
-            }
+                
+                if($('#id_fazenda').prop('options').length == 0){
+                    $('#id_fazenda').append($('<option></option>').prop("value","").text('---------'));
+                }
+                
+                for(var i = 0; i < fazendas.length; i++){
+                    if ($('#id_fazenda').prop('options').length < fazendas.length + 1 && select_options.includes(data[i].pk) === false){
+                        $('#id_fazenda').append($('<option></option>').prop("value",fazendas[i].pk).text(fazendas[i].fields.nome));
+                    }
+                }
+                
+                if(fazenda_inicial !== false){
+                    $('#id_fazenda').val(fazenda_inicial)
+                    fazenda_inicial = false
+                }
+                if(fazenda_nota !== ''){
+                    $('#id_fazenda').val(fazenda_nota)
+                    fazenda_nota = ''
+                }
 
-            var enderecos = []
-            var select_options_end = []
-            for (var i = 0; i < $('#id_endereco').prop('options').length; i++){
-                if ($('#id_endereco option')[i].value !== '') {
-                    select_options_end.push(($('#id_endereco option')[i].value));
-                    select_options_end = select_options_end.map(i=>Number(i));   
+                var enderecos = []
+                var select_options_end = []
+                for (var i = 0; i < $('#id_endereco').prop('options').length; i++){
+                    if ($('#id_endereco option')[i].value !== '') {
+                        select_options_end.push(($('#id_endereco option')[i].value));
+                        select_options_end = select_options_end.map(i=>Number(i));   
+                    }
                 }
-            }
 
-            for(var i = 0; i < data.length; i++) {
-                if(data[i].model == 'cadastro.endereco'){
-                    enderecos.push(data[i]);
+                for(var i = 0; i < data.length; i++) {
+                    if(data[i].model == 'cadastro.endereco'){
+                        enderecos.push(data[i]);
+                    }
                 }
-            }
 
-            if (enderecos.length < 1){
-                $('#id_endereco option').remove();
-            }
-            
-            if($('#id_endereco').prop('options').length == 0){
-                $('#id_endereco').append($('<option></option>').prop("value","").text('---------'));
-            }
-            
-            for(var i = 0; i < enderecos.length; i++){
-                if ($('#id_endereco').prop('options').length < enderecos.length && select_options_end.includes(enderecos[i].pk) === false){
-                    $('#id_endereco').append($('<option></option>').prop("value",enderecos[i].pk).text(enderecos[i].fields.tipo_endereco));
+                if (enderecos.length < 1){
+                    $('#id_endereco option').remove();
                 }
+                
+                if($('#id_endereco').prop('options').length == 0){
+                    $('#id_endereco').append($('<option></option>').prop("value","").text('---------'));
+                }
+                
+                for(var i = 0; i < enderecos.length; i++){
+                    if ($('#id_endereco').prop('options').length < enderecos.length && select_options_end.includes(enderecos[i].pk) === false){
+                        $('#id_endereco').append($('<option></option>').prop("value",enderecos[i].pk).text(enderecos[i].fields.tipo_endereco));
+                    }
+                }
+                
+                if(endereco_inicial !== false){
+                    $('#id_endereco').val(endereco_inicial)
+                    endereco_inicial = false
+                }
+                if(endereco_nota !== ''){
+                    $('#id_endereco').val(endereco_nota)
+                    endereco_nota = ''
+                }
+
             }
             
-            if(endereco_inicial !== false){
-                $('#id_endereco').val(endereco_inicial)
-                endereco_inicial = false
-            }
-            if(endereco_nota !== ''){
-                $('#id_endereco').val(endereco_nota)
-                endereco_nota = ''
-            }
         
             for(var i = 0; i < data.length; i++) {
                 if(data[i].model == 'cadastro.pessoajuridica'){
@@ -3444,42 +3468,43 @@ $.Admin.notaFiscalForm = {
                 if(data[i].model == 'cadastro.telefone'){
                     $('#tel_dest').text(data[i].fields.telefone);
                 }
-            }
-            for(var i = 0; i < data.length; i++) {
-                if(data[i].model == 'cadastro.fazenda'){
-                    if($('#id_fazenda').val()){
-                        var fazenda_pk = $('#id_fazenda').val();
-                        if(data[i].pk === Number(fazenda_pk)){
-                            $('#ie_rg_dest').text(data[i].fields.inscricao_estadual);
-                            $('#estado_dest').text(data[i].fields.uf);
-                            $('#bairro_dest').text(data[i].fields.bairro);
-                            $('#cidade_dest').text(data[i].fields.municipio);
-                            $('#cmun_dest').text(data[i].fields.cmun);
-                            $('#cep_dest').text(data[i].fields.cep);
-                            $('#endereco_dest').text(data[i].fields.endereco);
-                            if($('#id_endereco').val() == ''){
-                                $('#nro_dest').text("");
+            }if(tipo_nf == 'saida'){
+                for(var i = 0; i < data.length; i++) {
+                    if(data[i].model == 'cadastro.fazenda'){
+                        if($('#id_fazenda').val()){
+                            var fazenda_pk = $('#id_fazenda').val();
+                            if(data[i].pk === Number(fazenda_pk)){
+                                $('#ie_rg_dest').text(data[i].fields.inscricao_estadual);
+                                $('#estado_dest').text(data[i].fields.uf);
+                                $('#bairro_dest').text(data[i].fields.bairro);
+                                $('#cidade_dest').text(data[i].fields.municipio);
+                                $('#cmun_dest').text(data[i].fields.cmun);
+                                $('#cep_dest').text(data[i].fields.cep);
+                                $('#endereco_dest').text(data[i].fields.endereco);
+                                if($('#id_endereco').val() == ''){
+                                    $('#nro_dest').text("");
+                                }
                             }
-                            
+                        }    
+                    }  
+                }    
+                for(var i = 0; i < data.length; i++) {
+                    if(data[i].model == 'cadastro.endereco'){
+                        if($('#id_endereco').val()){
+                            var endereco_pk = $('#id_endereco').val();
+                            if(data[i].pk === Number(endereco_pk)){
+                                $('#estado_dest').text(data[i].fields.uf);
+                                $('#bairro_dest').text(data[i].fields.bairro);
+                                $('#cidade_dest').text(data[i].fields.municipio);
+                                $('#cmun_dest').text(data[i].fields.cmun);
+                                $('#cep_dest').text(data[i].fields.cep);
+                                $('#endereco_dest').text(data[i].fields.endereco);
+                                $('#nro_dest').text(data[i].fields.endereco);
+            
+                            }                            
                         }
                     }    
                 }      
-            }
-            for(var i = 0; i < data.length; i++) {
-                if(data[i].model == 'cadastro.endereco'){
-                    if($('#id_endereco').val()){
-                        var endereco_pk = $('#id_endereco').val();
-                        if(data[i].pk === Number(endereco_pk)){
-                            $('#estado_dest').text(data[i].fields.uf);
-                            $('#bairro_dest').text(data[i].fields.bairro);
-                            $('#cidade_dest').text(data[i].fields.municipio);
-                            $('#cmun_dest').text(data[i].fields.cmun);
-                            $('#cep_dest').text(data[i].fields.cep);
-                            $('#endereco_dest').text(data[i].fields.endereco);
-                            $('#nro_dest').text(data[i].fields.endereco);
-                        }
-                    }    
-                }                    
             }
         }
     },

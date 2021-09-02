@@ -514,7 +514,7 @@ class GerarPDFCompra(CustomView):
         compra_report.title = title
 
         compra_report.band_page_footer = compra_report.banda_foot
-
+        
         try:
             usuario = Usuario.objects.get(pk=user_id)
             m_empresa = MinhaEmpresa.objects.get(m_usuario=usuario)
@@ -535,38 +535,38 @@ class GerarPDFCompra(CustomView):
             pass
 
         compra_report.topo_pagina.inserir_data_emissao(compra.data_emissao)
+        
         if isinstance(compra, OrcamentoCompra):
             compra_report.topo_pagina.inserir_data_validade(
                 compra.data_vencimento)
         elif isinstance(compra, PedidoCompra):
             compra_report.topo_pagina.inserir_data_entrega(compra.data_entrega)
         compra_report.band_page_header = compra_report.topo_pagina
-
+        
         if compra.fornecedor.tipo_pessoa == 'PJ':
             compra_report.dados_fornecedor.inserir_informacoes_pj()
         elif compra.fornecedor.tipo_pessoa == 'PF':
             compra_report.dados_fornecedor.inserir_informacoes_pf()
-
+        
         if compra.fornecedor.endereco_padrao:
             compra_report.dados_fornecedor.inserir_informacoes_endereco()
         if compra.fornecedor.telefone_padrao:
             compra_report.dados_fornecedor.inserir_informacoes_telefone()
         if compra.fornecedor.email_padrao:
             compra_report.dados_fornecedor.inserir_informacoes_email()
-
+        
         compra_report.band_page_header.child_bands.append(
             compra_report.dados_fornecedor)
-
+        
         compra_report.dados_produtos.band_detail.set_band_height(
             len(ItensCompra.objects.filter(compra_id=compra)))
         compra_report.banda_produtos.elements.append(
             compra_report.dados_produtos)
         compra_report.band_page_header.child_bands.append(
             compra_report.banda_produtos)
-
-        compra_report.band_page_header.child_bands.append(
-            compra_report.totais_venda)
-
+        #PROBLEMA COMEÇA
+        compra_report.band_page_header.child_bands.append(compra_report.totais_venda)
+        #PROBLEMA TERMINA
         if compra.cond_pagamento:
             compra_report.banda_pagamento.elements.append(
                 compra_report.dados_pagamento)
@@ -575,6 +575,7 @@ class GerarPDFCompra(CustomView):
 
         compra_report.band_page_header.child_bands.append(
             compra_report.observacoes)
+        
 
         compra_report.generate_by(PDFGenerator, filename=compra_pdf)
         pdf = compra_pdf.getvalue()

@@ -99,11 +99,20 @@ class DadosCliente(ReportBand):
         self.ender_info = False
         self.elements = []
         txt = ObjectValue(attribute_name='cliente.nome_razao_social',
-                          top=0.3 * cm, left=0.3 * cm, width=8 * cm, height=0.5 * cm)
+                          top=0 * cm, left=0.3 * cm, width=8 * cm, height=0.5 * cm)
         txt.style = {'fontName': REPORT_FONT_BOLD,
                      'fontSize': 12, 'leading': 12}
         self.elements.append(txt)
 
+        self.height = 2.7 * cm
+
+    def fazenda(self):
+        txt = ObjectValue(attribute_name='fazenda.nome_impressao_nota',
+                        top=0.8 * cm, left=0.3 * cm, width=8 * cm, height=0.5 * cm)
+        txt.style = {'fontName': REPORT_FONT_BOLD,
+                    'fontSize': 10, 'leading': 12}
+        
+        self.elements.append(txt)
         self.height = 2.7 * cm
 
     def inserir_informacoes_pj(self):
@@ -127,6 +136,19 @@ class DadosCliente(ReportBand):
         self.elements.append(txt)
 
         txt = ObjectValue(attribute_name='cliente.pessoa_fis_info.format_rg',
+                          top=0.3 * cm, left=13 * cm, width=6.4 * cm, height=0.5 * cm)
+        txt.style = {'fontName': REPORT_FONT_BOLD,
+                     'fontSize': 10, 'leading': 10}
+        self.elements.append(txt)
+    
+    def inserir_informacoes_faz(self):
+        txt = ObjectValue(attribute_name='cliente.pessoa_fis_info.format_cpf',
+                          top=0.3 * cm, left=8.1 * cm, width=4 * cm, height=0.5 * cm)
+        txt.style = {'fontName': REPORT_FONT_BOLD,
+                     'fontSize': 10, 'leading': 10}
+        self.elements.append(txt)
+
+        txt = ObjectValue(attribute_name='cliente.pessoa_fis_info.format_faz',
                           top=0.3 * cm, left=13 * cm, width=6.4 * cm, height=0.5 * cm)
         txt.style = {'fontName': REPORT_FONT_BOLD,
                      'fontSize': 10, 'leading': 10}
@@ -393,7 +415,7 @@ class TotaisVenda(ReportBand):
         txt.style = {'fontName': REPORT_FONT_BOLD,
                      'fontSize': 10, 'alignment': TA_RIGHT, 'leading': 10}
         self.elements.append(txt)
-
+        # ERRRO ACONTECE AQUI... PÁGINA ACABA E NÃO ESTÁ CRIANDO OUTRA!    
         self.height = 3.6 * cm
 
 

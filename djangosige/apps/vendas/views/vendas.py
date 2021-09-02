@@ -507,10 +507,25 @@ class GerarPDFVenda(CustomView):
         if venda.cliente.tipo_pessoa == 'PJ':
             venda_report.dados_cliente.inserir_informacoes_pj()
         elif venda.cliente.tipo_pessoa == 'PF':
-            venda_report.dados_cliente.inserir_informacoes_pf()
+            if venda.fazenda:
+                venda.cliente.pessoa_fis_info.rg = venda.fazenda.inscricao_estadual
+                venda_report.dados_cliente.inserir_informacoes_faz()
+            else:
+                venda_report.dados_cliente.inserir_informacoes_pf()
 
         if venda.cliente.endereco_padrao:
-            venda_report.dados_cliente.inserir_informacoes_endereco()
+            if venda.fazenda:
+                venda_report.dados_cliente.fazenda()
+                venda.cliente.endereco_padrao.bairro = f'{venda.fazenda.bairro}'.replace('None', '')
+                venda.cliente.endereco_padrao.numero = ''
+                venda.cliente.endereco_padrao.logradouro = f'{venda.fazenda.endereco}'.replace('None', '')
+                venda.cliente.endereco_padrao.cep = f'{venda.fazenda.cep}'.replace('None', '')
+                venda.cliente.endereco_padrao.municipio = f'{venda.fazenda.municipio}'.replace('None', '')
+                venda.cliente.endereco_padrao.cmun = f'{venda.fazenda.cmun}'.replace('None', '')
+                venda.cliente.endereco_padrao.uf = f'{venda.fazenda.uf}'.replace('None', '')
+                venda_report.dados_cliente.inserir_informacoes_endereco()
+            else:
+                venda_report.dados_cliente.inserir_informacoes_endereco()
         if venda.cliente.telefone_padrao:
             venda_report.dados_cliente.inserir_informacoes_telefone()
         if venda.cliente.email_padrao:
