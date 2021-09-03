@@ -46,6 +46,5 @@ djangosige/media/imagens/usuarios/
 env/
 
 #AMAZON pull
-
 middleware.py
 .SG/configs/
