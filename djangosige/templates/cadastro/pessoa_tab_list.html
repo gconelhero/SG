@@ -4,7 +4,9 @@
   <li role="presentation"><a href="#tab_veiculo" data-toggle="tab">VEÍCULO</a></li>
   {% endif %}
   <li role="presentation"><a href="#tab_endereco" data-toggle="tab">ENDEREÇO</a></li>
+  {% if tipo_pessoa == 'cliente'%}
   <li role="presentation"><a href="#tab_fazenda" data-toggle="tab">FAZENDA</a></li>
+  {% endif %}
   <li role="presentation"><a href="#tab_contato" data-toggle="tab">CONTATO</a></li>
   <li role="presentation"><a href="#tab_banco" data-toggle="tab">DADOS BANCÁRIOS</a></li>
   <li role="presentation"><a href="#tab_documento" data-toggle="tab">DOCUMENTOS ADICIONAIS</a></li>
