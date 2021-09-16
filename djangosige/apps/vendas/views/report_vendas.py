@@ -57,7 +57,8 @@ class ReportVenda:
             self.plot.drawInlineImage(logo_path, 40, 727, width=100,height=80)
         except:
             print("Logo tipo ou usuário vinculado a empresa não encontrados.")
-
+            pass
+        
         self.plot.setFont("Times-Bold", 16)
         if isinstance(self.venda, OrcamentoVenda):
             self.eixo_x = 190
