@@ -74,12 +74,12 @@ class Entrada(Lancamento):
 
 
 class Saida(Lancamento):
-    fornecedor = models.ForeignKey(
-        'cadastro.Fornecedor', related_name="conta_fornecedor", on_delete=models.SET_NULL, null=True, blank=True)
-    status = models.CharField(
-        max_length=1, choices=STATUS_CONTA_SAIDA_ESCOLHAS, default='1')
-    grupo_plano = models.ForeignKey(
-        'financeiro.PlanoContasGrupo', related_name="grupo_plano_pagamento", on_delete=models.SET_NULL, null=True, blank=True)
+    fornecedor = models.ForeignKey('cadastro.Fornecedor', related_name="conta_fornecedor", 
+                                    on_delete=models.SET_NULL, null=True, blank=True)
+    status = models.CharField(max_length=1, choices=STATUS_CONTA_SAIDA_ESCOLHAS, default='1')
+
+    grupo_plano = models.ForeignKey('financeiro.PlanoContasGrupo', related_name="grupo_plano_pagamento", 
+                                    on_delete=models.SET_NULL, null=True, blank=True)
 
     def get_edit_url(self):
         if self.status == '0':

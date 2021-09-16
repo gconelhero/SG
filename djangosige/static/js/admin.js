@@ -1294,7 +1294,6 @@ $.Admin.vendaForm = {
         $('#venda_form_edit, #venda_form_add').on('submit', function(){
             return _this.verificarParcelas();
         });
-
         //Abrir pdf em nova tab
         $('#gerar_pdf_venda').on('click', function(event){
             event.preventDefault();
@@ -2288,7 +2287,7 @@ $.Admin.compraForm = {
         var produtos_input = $('select.select-produto');
 
         $.Admin.maskInput.maskVenda();
-        //Preencher campos edit view
+        //Preencher campos edit view ## ADCIONANDO GRUPO FISCAL PARA HANDLE DE PRODUTOS INFO
         $('#id_valor_total_display').text($('#id_valor_total').val());
 
         $('.formset[id^=produtos_form-]').each(function(){
@@ -2307,6 +2306,7 @@ $.Admin.compraForm = {
             if($(this).val()){
                 var postData = {
                     'pessoaId': $(this).val(),
+                    'grupoFiscalId': '',
                 }
                 $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_fornecedor_url'], postData, _this.handleFornecedorInfo);
             }else{
@@ -2334,6 +2334,7 @@ $.Admin.compraForm = {
             if($(this).val()){
                 var postData = {
                     'produtoId': $(this).val(),
+                    'grupoFiscalId': '',
                 }
                 $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
             }else{
@@ -2400,7 +2401,6 @@ $.Admin.compraForm = {
         $('#compra_form_edit, #compra_form_add').on('submit', function(){
             return $.Admin.vendaForm.verificarParcelas();
         });
-
         //Abrir pdf em nova tab
         $('#gerar_pdf_compra').on('click', function(event){
             event.preventDefault();
@@ -2936,7 +2936,7 @@ $.Admin.movimentoEstoqueForm = {
                         }
 
                         newForm.find('select[id$=-produto]').val(data[i].fields['produto_id']);
-                        //newForm.find('select[id$=-grupo_fiscal]').val(data[i].fields['grupo_fiscal']);
+                        newForm.find('select[id$=-grupo_fiscal]').val(data[i].fields['grupo_fiscal']);
                         newForm.find('input[id$=-quantidade]').val(data[i].fields['quantidade']);
                         newForm.find('input[id$=-valor_unit]').val(data[i].fields['valor_unit']);
                         newForm.find('input[id$=-subtotal]').val(data[i].fields['vprod']);

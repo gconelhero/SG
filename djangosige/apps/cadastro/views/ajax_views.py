@@ -12,7 +12,6 @@ class InfoCliente(View):
 
     def post(self, request, *args, **kwargs):
         obj_list = []
-        print(request.POST)
         pessoa = Pessoa.objects.get(pk=request.POST['pessoaId'])
         cliente = Cliente.objects.get(pk=request.POST['pessoaId'])
         fazendas = Fazenda.objects.all().filter(pessoa_faz=request.POST['pessoaId'])
@@ -108,7 +107,6 @@ class InfoProduto(View):
 
     def post(self, request, *args, **kwargs):
         obj_list = []
-
         try:
             produto = Produto.objects.get(pk=request.POST['produtoId'])
             obj_list.append(produto)

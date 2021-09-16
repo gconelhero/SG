@@ -9,15 +9,18 @@ from djangosige.apps.base.custom_views import CustomView, CustomCreateView, Cust
 
 from djangosige.apps.compras.forms import OrcamentoCompraForm, PedidoCompraForm, ItensCompraFormSet, PagamentoFormSet
 from djangosige.apps.compras.models import OrcamentoCompra, PedidoCompra, ItensCompra, Pagamento
-from djangosige.apps.cadastro.models import MinhaEmpresa
+from djangosige.apps.cadastro.models import MinhaEmpresa, Produto
 from djangosige.apps.estoque.models import ProdutoEstocado, EntradaEstoque, ItensMovimento
 from djangosige.apps.login.models import Usuario
 from djangosige.configs.settings import MEDIA_ROOT
-from .report_compras import CompraReport
+from .report_compras import ReportCompra
 
-from geraldo.generators import PDFGenerator
+from geraldo.generators import PDFGenerator, TextGenerator
 from datetime import datetime
-import io
+import io, os
+import PyPDF2, sys
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 
 
 class AdicionarCompraView(CustomCreateView):
@@ -262,6 +265,8 @@ class EditarCompraView(CustomUpdateView):
 
         request.POST = req_post
 
+        itens_list = ItensCompra.objects.filter(compra_id=self.object.id)
+
         form = self.get_form(form_class)
         produtos_form = ItensCompraFormSet(
             request.POST, prefix='produtos_form', instance=self.object)
@@ -272,11 +277,18 @@ class EditarCompraView(CustomUpdateView):
             self.object = form.save(commit=False)
             self.object.save()
 
+            compara_objetos = []
             for pform in produtos_form:
                 if pform.cleaned_data != {}:
                     itens_compra_obj = pform.save(commit=False)
+                    compara_objetos.append(itens_compra_obj)
+
                     itens_compra_obj.compra_id = self.object
                     itens_compra_obj.save()
+
+            for item in itens_list:
+                if item not in compara_objetos:
+                    item.delete()
 
             pagamento_form.instance = self.object
             pagamento_form.save()
@@ -506,81 +518,21 @@ class ReceberPedidoCompraView(CustomView):
 
 class GerarPDFCompra(CustomView):
 
-    def gerar_pdf(self, title, compra, user_id):
+    def gerar_pdf(self, titulo, compra, user_id):
         resp = HttpResponse(content_type='application/pdf')
-
-        compra_pdf = io.BytesIO()
-        compra_report = CompraReport(queryset=[compra, ])
-        compra_report.title = title
-
-        compra_report.band_page_footer = compra_report.banda_foot
+    
+        compra_report = ReportCompra(titulo, compra, user_id)
+        compra_report.header()
+        compra_report.fornecedor()
+        compra_report.produtos()
+        compra_report.totais()
+        compra_report.obs()
+        buffer = compra_report.rodape(True)
         
-        try:
-            usuario = Usuario.objects.get(pk=user_id)
-            m_empresa = MinhaEmpresa.objects.get(m_usuario=usuario)
-            flogo = m_empresa.m_empresa.logo_file
-            logo_path = '{0}{1}'.format(MEDIA_ROOT, flogo.name)
-            if flogo != 'imagens/logo.png':
-                compra_report.topo_pagina.inserir_logo(logo_path)
-
-            compra_report.band_page_footer.inserir_nome_empresa(
-                m_empresa.m_empresa.nome_razao_social)
-            if m_empresa.m_empresa.endereco_padrao:
-                compra_report.band_page_footer.inserir_endereco_empresa(
-                    m_empresa.m_empresa.endereco_padrao.format_endereco_completo)
-            if m_empresa.m_empresa.telefone_padrao:
-                compra_report.band_page_footer.inserir_telefone_empresa(
-                    m_empresa.m_empresa.telefone_padrao.telefone)
-        except:
-            pass
-
-        compra_report.topo_pagina.inserir_data_emissao(compra.data_emissao)
+        pdf = buffer.getvalue()
         
-        if isinstance(compra, OrcamentoCompra):
-            compra_report.topo_pagina.inserir_data_validade(
-                compra.data_vencimento)
-        elif isinstance(compra, PedidoCompra):
-            compra_report.topo_pagina.inserir_data_entrega(compra.data_entrega)
-        compra_report.band_page_header = compra_report.topo_pagina
-        
-        if compra.fornecedor.tipo_pessoa == 'PJ':
-            compra_report.dados_fornecedor.inserir_informacoes_pj()
-        elif compra.fornecedor.tipo_pessoa == 'PF':
-            compra_report.dados_fornecedor.inserir_informacoes_pf()
-        
-        if compra.fornecedor.endereco_padrao:
-            compra_report.dados_fornecedor.inserir_informacoes_endereco()
-        if compra.fornecedor.telefone_padrao:
-            compra_report.dados_fornecedor.inserir_informacoes_telefone()
-        if compra.fornecedor.email_padrao:
-            compra_report.dados_fornecedor.inserir_informacoes_email()
-        
-        compra_report.band_page_header.child_bands.append(
-            compra_report.dados_fornecedor)
-        
-        compra_report.dados_produtos.band_detail.set_band_height(
-            len(ItensCompra.objects.filter(compra_id=compra)))
-        compra_report.banda_produtos.elements.append(
-            compra_report.dados_produtos)
-        compra_report.band_page_header.child_bands.append(
-            compra_report.banda_produtos)
-        #PROBLEMA COMEÇA
-        compra_report.band_page_header.child_bands.append(compra_report.totais_venda)
-        #PROBLEMA TERMINA
-        if compra.cond_pagamento:
-            compra_report.banda_pagamento.elements.append(
-                compra_report.dados_pagamento)
-            compra_report.band_page_header.child_bands.append(
-                compra_report.banda_pagamento)
-
-        compra_report.band_page_header.child_bands.append(
-            compra_report.observacoes)
-        
-
-        compra_report.generate_by(PDFGenerator, filename=compra_pdf)
-        pdf = compra_pdf.getvalue()
         resp.write(pdf)
-
+        
         return resp
 
 
