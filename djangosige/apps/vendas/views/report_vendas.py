@@ -55,7 +55,8 @@ class ReportVenda:
             flogo = m_empresa.m_empresa.logo_file
             logo_path = '{0}{1}'.format(MEDIA_ROOT, flogo.name)
             self.plot.drawInlineImage(logo_path, 40, 727, width=100,height=80)
-        except:
+        except Exception as erro:
+            print("ERRO > ", erro)
             print("Logo tipo ou usuário vinculado a empresa não encontrados.")
             pass
         
