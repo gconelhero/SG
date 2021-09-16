@@ -64,16 +64,19 @@ class ReportCompra:
             self.eixo_x += 55
             self.eixo_y -= 15
             self.plot.drawString(self.eixo_x, self.eixo_y, f"Data: {self.compra.data_emissao.strftime('%d/%m/%Y')}")
+            if self.compra.data_vencimento != None:    
+                self.eixo_x -= 25
+                self.eixo_y -= 15
+                self.plot.drawString(self.eixo_x, self.eixo_y, f"Data vencimento: {self.compra.data_vencimento.strftime('%d/%m/%Y')}")
         if isinstance(self.compra, PedidoCompra):
             self.plot.drawString(self.eixo_x, self.eixo_y, self.title)
             self.plot.setFont("Helvetica", 9)
             self.eixo_x += 40
             self.eixo_y -= 15
-            self.plot.drawString(self.eixo_x, self.eixo_y, f"Data: {self.compra.data_emissao.strftime('%d/%m/%Y')}")
-        if self.compra.data_vencimento != None:    
-            self.eixo_x -= 10
-            self.eixo_y -= 15
-            self.plot.drawString(self.eixo_x, self.eixo_y, f"Data vencimento: {self.compra.data_vencimento}")
+            if self.compra.data_emissao:
+                self.plot.drawString(self.eixo_x, self.eixo_y, f"Data: {self.compra.data_emissao.strftime('%d/%m/%Y')}")
+            else:
+                self.plot.drawString(self.eixo_x, self.eixo_y, "Importado por XML")
 
         self.plot.line(0, 720, 535, 720)
 

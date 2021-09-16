@@ -69,7 +69,7 @@ class ReportVenda:
             if self.venda.data_vencimento != None:    
                 self.eixo_x -= 10
                 self.eixo_y -= 15
-                self.plot.drawString(self.eixo_x, self.eixo_y, f"Data vencimento: {self.venda.data_vencimento}")
+                self.plot.drawString(self.eixo_x, self.eixo_y, f"Data vencimento: {self.venda.data_vencimento.strftime('%d/%m/%Y')}")
         if isinstance(self.venda, PedidoVenda):
             self.plot.drawString(self.eixo_x, self.eixo_y, self.title)
             self.plot.setFont("Helvetica", 9)

@@ -17,7 +17,7 @@ from geraldo.generators import PDFGenerator
 from datetime import datetime
 import io
 
-#from .report_vendas import ReportVenda
+from .report_vendas import ReportVenda
 
 
 class AdicionarVendaView(CustomCreateView):
@@ -561,7 +561,6 @@ class GerarPDFVenda(CustomView):
         return resp
 
     def gerar_pdf(self, title, venda, user_id):
-        from .report_vendas_dois import ReportVenda
         resp = HttpResponse(content_type='application/pdf')
 
         venda_report = ReportVenda(title, venda, user_id)
