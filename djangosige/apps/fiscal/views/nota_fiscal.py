@@ -17,7 +17,8 @@ from djangosige.apps.vendas.models import PedidoVenda, ItensVenda
 
 try:
     from .processador_nf import ProcessadorNotaFiscal
-except ImportError:
+except ImportError as erro:
+    print("ERRO > ", erro)
     pass
 
 from decimal import Decimal

@@ -64,7 +64,7 @@ class ReportCompra:
             self.eixo_x += 55
             self.eixo_y -= 15
             self.plot.drawString(self.eixo_x, self.eixo_y, f"Data: {self.compra.data_emissao.strftime('%d/%m/%Y')}")
-            if self.compra.data_vencimento != None:    
+            if self.compra.data_vencimento != None:
                 self.eixo_x -= 25
                 self.eixo_y -= 15
                 self.plot.drawString(self.eixo_x, self.eixo_y, f"Data vencimento: {self.compra.data_vencimento.strftime('%d/%m/%Y')}")
@@ -76,6 +76,7 @@ class ReportCompra:
             if self.compra.data_emissao:
                 self.plot.drawString(self.eixo_x, self.eixo_y, f"Data: {self.compra.data_emissao.strftime('%d/%m/%Y')}")
             else:
+                self.eixo_x = 235
                 self.plot.drawString(self.eixo_x, self.eixo_y, "Importado por XML")
 
         self.plot.line(0, 720, 535, 720)
@@ -302,7 +303,6 @@ class ReportCompra:
         self.plot.drawString(self.eixo_x, self.eixo_y, str(obs))
         for i in range(0, 3):
             self.plot.drawString(self.eixo_x, self.eixo_y, "")
-            print("TESTE")
             self.eixo_y -= 10
         
 

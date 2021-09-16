@@ -68,7 +68,7 @@ class ReportVenda:
             self.eixo_y -= 15
             self.plot.drawString(self.eixo_x, self.eixo_y, f"Data: {self.venda.data_emissao.strftime('%d/%m/%Y')}")
             if self.venda.data_vencimento != None:    
-                self.eixo_x -= 10
+                self.eixo_x -= 23
                 self.eixo_y -= 15
                 self.plot.drawString(self.eixo_x, self.eixo_y, f"Data vencimento: {self.venda.data_vencimento.strftime('%d/%m/%Y')}")
         if isinstance(self.venda, PedidoVenda):

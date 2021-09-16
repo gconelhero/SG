@@ -13,14 +13,8 @@ from djangosige.apps.cadastro.models import MinhaEmpresa, Produto
 from djangosige.apps.estoque.models import ProdutoEstocado, EntradaEstoque, ItensMovimento
 from djangosige.apps.login.models import Usuario
 from djangosige.configs.settings import MEDIA_ROOT
-from .report_compras import ReportCompra
 
-from geraldo.generators import PDFGenerator, TextGenerator
-from datetime import datetime
-import io, os
-import PyPDF2, sys
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
+from .report_compras import ReportCompra
 
 
 class AdicionarCompraView(CustomCreateView):

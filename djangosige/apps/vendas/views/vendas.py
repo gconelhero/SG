@@ -5,17 +5,12 @@ from django.shortcuts import redirect
 from django.http import HttpResponse
 
 from djangosige.apps.base.custom_views import CustomView, CustomCreateView, CustomListView, CustomUpdateView
-from django.core.cache import cache
 
 from djangosige.apps.vendas.forms import OrcamentoVendaForm, PedidoVendaForm, ItensVendaFormSet, PagamentoFormSet
 from djangosige.apps.vendas.models import OrcamentoVenda, PedidoVenda, ItensVenda, Pagamento
 from djangosige.apps.cadastro.models import MinhaEmpresa, Produto, Fazenda
 from djangosige.apps.login.models import Usuario
 from djangosige.configs.settings import MEDIA_ROOT
-
-from geraldo.generators import PDFGenerator
-from datetime import datetime
-import io
 
 from .report_vendas import ReportVenda
 

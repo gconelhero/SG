@@ -46,7 +46,7 @@ class InfoCliente(View):
         
         data = serializers.serialize('json', obj_list, fields=('indicador_ie', 'limite_de_credito', 'cnpj', 'inscricao_estadual', 'responsavel', 'cpf', 'rg', 'id_estrangeiro', 'logradouro', 'numero', 'bairro',
                                                             'municipio', 'cmun', 'uf', 'pais', 'complemento', 'cep', 'email', 'telefone','fazenda', 'nome','endereco', 'complemento', 'tipo_endereco'))
-        print(data)
+        
         return HttpResponse(data, content_type='application/json')
 
 

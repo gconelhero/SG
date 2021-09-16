@@ -168,7 +168,7 @@ class ItensVenda(models.Model):
             return self.subtotal + self.desconto
         else:
             tot_sem_desc = (self.subtotal * 100) / (100 - self.desconto)
-            return tot_sem_desc
+            return round(tot_sem_desc, 2)
 
     def get_mot_deson_icms(self):
         try:
