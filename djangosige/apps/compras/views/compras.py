@@ -14,6 +14,7 @@ from djangosige.apps.estoque.models import ProdutoEstocado, EntradaEstoque, Iten
 from djangosige.apps.login.models import Usuario
 from djangosige.configs.settings import MEDIA_ROOT
 
+from datetime import datetime
 from .report_compras import ReportCompra
 
 

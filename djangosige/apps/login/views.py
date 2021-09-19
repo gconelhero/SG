@@ -24,7 +24,7 @@ from djangosige.apps.base.views_mixins import SuperUserRequiredMixin
 
 from .forms import UserLoginForm, UserRegistrationForm, PasswordResetForm, SetPasswordForm, PerfilUsuarioForm
 from .models import Usuario
-from djangosige.configs.settings import DEFAULT_FROM_EMAIL
+from djangosige.configs.settings import DEFAULT_FROM_EMAIL, EMAIL_HOST_USER
 
 from djangosige.apps.cadastro.forms import MinhaEmpresaForm
 from djangosige.apps.cadastro.models import MinhaEmpresa
@@ -115,8 +115,7 @@ class ForgotPasswordView(FormView):
         form = self.form_class(request.POST)
 
         if not DEFAULT_FROM_EMAIL:
-            form.add_error(
-                field=None, error=u"Envio de email não configurado.")
+            form.add_error(field=None, error=u"Envio de email não configurado.")
             return self.form_invalid(form)
 
         if form.is_valid():
@@ -130,17 +129,19 @@ class ForgotPasswordView(FormView):
                         c = {
                             'email': associated_user.email,
                             'domain': request.META['HTTP_HOST'],
-                            'site_name': 'djangoSIGE',
-                            'uid': urlsafe_base64_encode(force_bytes(associated_user.pk)).decode(encoding="utf-8"),
+                            'site_name': 'SG CS',
+                            'uid': urlsafe_base64_encode(force_bytes(associated_user.pk)),
                             'user': associated_user,
                             'token': default_token_generator.make_token(associated_user),
                             'protocol': 'http://',
                         }
-                        subject = u"Redefinir sua senha - DjangoSIGE"
+                        
+                        subject = u"Redefinir sua senha - SG CS"
                         email_template_name = 'login/trocar_senha_email.html'
                         email_mensagem = loader.render_to_string(
                             email_template_name, c)
-                        sended = send_mail(subject, email_mensagem, DEFAULT_FROM_EMAIL, [
+
+                        sended = send_mail(subject, email_mensagem, EMAIL_HOST_USER, [
                                            associated_user.email, ], fail_silently=False)
 
                         if sended == 1:
@@ -181,6 +182,7 @@ class PasswordResetConfirmView(FormView):
         if uidb64 is None or token is None:
             form.add_error(
                 field=None, error=u"O link usado para a troca de senha não é válido ou expirou, por favor tente enviar novamente.")
+            
             return self.form_invalid(form)
 
         try:
@@ -209,6 +211,7 @@ class PasswordResetConfirmView(FormView):
         else:
             form.add_error(
                 field=None, error=u"O link usado para a troca de senha não é válido ou expirou, por favor tente enviar novamente.")
+            
             return self.form_invalid(form)
 
 

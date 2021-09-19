@@ -12,6 +12,7 @@ from djangosige.apps.cadastro.models import MinhaEmpresa, Produto, Fazenda
 from djangosige.apps.login.models import Usuario
 from djangosige.configs.settings import MEDIA_ROOT
 
+from datetime import datetime   
 from .report_vendas import ReportVenda
 
 
