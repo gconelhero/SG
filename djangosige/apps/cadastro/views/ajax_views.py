@@ -3,7 +3,6 @@
 from django.views.generic import View
 from django.http import HttpResponse
 from django.core import serializers
-from django.core.cache import cache
 
 from djangosige.apps.cadastro.models import Pessoa, Fazenda, Cliente, Fornecedor, Transportadora, Produto, Endereco
 from djangosige.apps.fiscal.models import ICMS, ICMSSN, IPI, ICMSUFDest, GrupoFiscal

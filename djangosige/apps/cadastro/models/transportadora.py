@@ -5,7 +5,8 @@ from .base import Pessoa, UF_SIGLA
 
 
 class Transportadora(Pessoa):
-
+    nome = models.CharField(blank=True, null=True, max_length=64)
+    
     class Meta:
         verbose_name = "Transportadora"
 

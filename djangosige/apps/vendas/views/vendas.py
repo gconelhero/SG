@@ -356,7 +356,6 @@ class EditarOrcamentoVendaView(EditarVendaView):
         return super(EditarOrcamentoVendaView, self).post(request, form_class, *args, **kwargs)
 
 
-
 class GerarPedidoVendaView(CustomView):
     permission_codename = ['add_pedidovenda', 'change_pedidovenda', ]
 
@@ -463,98 +462,6 @@ class GerarCopiaPedidoVendaView(GerarCopiaVendaView):
 
 
 class GerarPDFVenda(CustomView):
-
-    def gerar_pdf_dois(self, title, venda, user_id):
-        resp = HttpResponse(content_type='application/pdf')
-
-        venda_pdf = io.BytesIO()
-        venda_report = VendaReport(queryset=[venda, ])
-        venda_report.title = title
-
-        venda_report.band_page_footer = venda_report.banda_foot
-
-        try:
-            usuario = Usuario.objects.get(pk=user_id)
-            m_empresa = MinhaEmpresa.objects.get(m_usuario=usuario)
-            flogo = m_empresa.m_empresa.logo_file
-            logo_path = '{0}{1}'.format(MEDIA_ROOT, flogo.name)
-            if flogo != 'imagens/logo.png':
-                venda_report.topo_pagina.inserir_logo(logo_path)
-
-            venda_report.band_page_footer.inserir_nome_empresa(
-                m_empresa.m_empresa.nome_razao_social)
-            if m_empresa.m_empresa.endereco_padrao:
-                venda_report.band_page_footer.inserir_endereco_empresa(
-                    m_empresa.m_empresa.endereco_padrao.format_endereco_completo)
-            if m_empresa.m_empresa.telefone_padrao:
-                venda_report.band_page_footer.inserir_telefone_empresa(
-                    m_empresa.m_empresa.telefone_padrao.telefone)
-        except:
-            pass
-
-        venda_report.topo_pagina.inserir_data_emissao(venda.data_emissao)
-        if isinstance(venda, OrcamentoVenda):
-            venda_report.topo_pagina.inserir_data_validade(
-                venda.data_vencimento)
-        elif isinstance(venda, PedidoVenda):
-            venda_report.topo_pagina.inserir_data_entrega(venda.data_entrega)
-        venda_report.band_page_header = venda_report.topo_pagina
-
-        if venda.cliente.tipo_pessoa == 'PJ':
-            venda_report.dados_cliente.inserir_informacoes_pj()
-        elif venda.cliente.tipo_pessoa == 'PF':
-            if venda.fazenda:
-                venda.cliente.pessoa_fis_info.rg = venda.fazenda.inscricao_estadual
-                venda_report.dados_cliente.inserir_informacoes_faz()
-            else:
-                venda_report.dados_cliente.inserir_informacoes_pf()
-
-        if venda.cliente.endereco_padrao:
-            if venda.fazenda:
-                venda_report.dados_cliente.fazenda()
-                venda.cliente.endereco_padrao.bairro = f'{venda.fazenda.bairro}'.replace('None', '')
-                venda.cliente.endereco_padrao.numero = ''
-                venda.cliente.endereco_padrao.logradouro = f'{venda.fazenda.endereco}'.replace('None', '')
-                venda.cliente.endereco_padrao.cep = f'{venda.fazenda.cep}'.replace('None', '')
-                venda.cliente.endereco_padrao.municipio = f'{venda.fazenda.municipio}'.replace('None', '')
-                venda.cliente.endereco_padrao.cmun = f'{venda.fazenda.cmun}'.replace('None', '')
-                venda.cliente.endereco_padrao.uf = f'{venda.fazenda.uf}'.replace('None', '')
-                venda_report.dados_cliente.inserir_informacoes_endereco()
-            else:
-                venda_report.dados_cliente.inserir_informacoes_endereco()
-        if venda.cliente.telefone_padrao:
-            venda_report.dados_cliente.inserir_informacoes_telefone()
-        if venda.cliente.email_padrao:
-            venda_report.dados_cliente.inserir_informacoes_email()
-
-        venda_report.band_page_header.child_bands.append(
-            venda_report.dados_cliente)
-
-        venda_report.dados_produtos.band_detail.set_band_height(
-            len(ItensVenda.objects.filter(venda_id=venda)))
-        venda_report.banda_produtos.elements.append(
-            venda_report.dados_produtos)
-        venda_report.band_page_header.child_bands.append(
-            venda_report.banda_produtos)
-
-        venda_report.band_page_header.child_bands.append(
-            venda_report.totais_venda)
-
-        if venda.cond_pagamento:
-            venda_report.banda_pagamento.elements.append(
-                venda_report.dados_pagamento)
-            venda_report.band_page_header.child_bands.append(
-                venda_report.banda_pagamento)
-
-        venda_report.observacoes.inserir_vendedor()
-        venda_report.band_page_header.child_bands.append(
-            venda_report.observacoes)
-
-        venda_report.generate_by(PDFGenerator, filename=venda_pdf)
-        pdf = venda_pdf.getvalue()
-        resp.write(pdf)
-
-        return resp
 
     def gerar_pdf(self, title, venda, user_id):
         resp = HttpResponse(content_type='application/pdf')

@@ -4,7 +4,7 @@ from djangosige.apps.base.custom_views import CustomCreateView, CustomListView, 
 
 from djangosige.apps.cadastro.forms import PessoaJuridicaForm, PessoaFisicaForm, EnderecoFormSet, FazendaFormSet, TelefoneFormSet, EmailFormSet, \
     SiteFormSet, BancoFormSet, DocumentoFormSet
-from djangosige.apps.cadastro.models import PessoaFisica, PessoaJuridica, Endereco, Fazenda, Telefone, Email, Site, Banco, Documento
+from djangosige.apps.cadastro.models import PessoaFisica, PessoaJuridica, Endereco, Fazenda, Telefone, Email, Site, Banco, Documento, Transportadora
 
 
 class AdicionarPessoaView(CustomCreateView):
@@ -54,9 +54,7 @@ class AdicionarPessoaView(CustomCreateView):
                                                              veiculo_form=veiculo_form))
 
     def post(self, request, form, *args, **kwargs):
-        self.object = None
         extra_forms = []
-
         veiculo_form = kwargs.pop('veiculo_form', None)
 
         endereco_form = EnderecoFormSet(request.POST, prefix='endereco_form')
@@ -137,7 +135,9 @@ class AdicionarPessoaView(CustomCreateView):
                 if veiculo_form:
                     veiculo_form.instance = self.object
                     veiculo_form.save()
-
+                # ADICIONANDO NOME EM TRANSPORTADORA PARA O USO NO AJAX(ADMIN.JS(REFRESHFORM))
+                if isinstance(self.object, Transportadora):
+                    self.object.nome = self.object.nome_razao_social
                 # salvar objeto criado e pessoa fisica/juridica
                 self.object.save()
                 pessoa_form.instance.pessoa_id = self.object
@@ -334,6 +334,9 @@ class EditarPessoaView(CustomUpdateView):
                     veiculo_form.instance = self.object
                     veiculo_form.save()
 
+                # ADICIONANDO NOME EM TRANSPORTADORA PARA O USO NO AJAX(ADMIN.JS(REFRESHFORM))
+                if isinstance(self.object, Transportadora):
+                    self.object.nome = self.object.nome_razao_social
                 # salvar objeto criado e pessoa fisica/juridica
                 self.object.save()
                 pessoa_form.instance.pessoa_id = self.object

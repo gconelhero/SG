@@ -1000,7 +1000,7 @@ $.Admin.autocompleteField = {
 
         //manter dropdown mesmo tamanho do input
         $('.ui-menu').css('max-width', $(window).width()/2);
-    },
+    }
 }
 
 
@@ -2115,6 +2115,8 @@ $.Admin.vendaForm = {
             $('.display-cliente-field').text('');
         }else{
             $('.display-cliente-field').text('');
+
+        
             // TRATANDO FAZENDAS EM VENDAS
             var fazendas = []
             var select_options = []
@@ -2277,6 +2279,139 @@ $.Admin.vendaForm = {
             }
         }
     },
+}
+
+// ADICIONANDO OPÇÕES INSERIDAS APÓS INSTÂNCIA DA VENDA/ORCAMENTO (SEM TER QUE REABRIR A VENDA/ORCAMENTO)
+$.Admin.refreshForm = {
+    init: function(req_refresh){
+        var _this = this
+
+        if ($('#id_cliente').val()){
+            var postData = {
+                'csrfmiddlewaretoken' : $.Admin.cookies.getCookie('csrftoken'),
+                'pessoaId': $('#id_cliente').val()
+            }
+        }else{
+            var postData = {
+                'csrfmiddlewaretoken' : $.Admin.cookies.getCookie('csrftoken'),
+                'pessoaId': ''
+            }
+        }
+        $.Admin.ajaxRequest.ajaxPostRequest(req_refresh['refresh_form'], postData, _this.refreshForm);
+    },
+
+    refreshForm: function(data) {
+        if(typeof data === 'undefined' || !data){
+            return;
+        }else{
+            var clientes = []
+            var cliente_options = []
+            var fazendas = []
+            var fazenda_options = []
+            var enderecos = []
+            var endereco_options = []
+            var trans = []
+            var trans_options = []
+            var cond_pagamento = []
+            var cond_pag_options = []
+
+            for (var i = 0; i < $('#id_cond_pagamento').prop('options').length; i++){
+                if ($('#id_cond_pagamento option')[i].value !== '') {
+                    cond_pag_options.push(($('#id_cond_pagamento option')[i].value));
+                    cond_pag_options = cond_pag_options.map(i=>Number(i));
+                }
+            }
+
+            for (var i = 0; i < $('#id_transportadora').prop('options').length; i++){
+                if ($('#id_transportadora option')[i].value !== '') {
+                    trans_options.push(($('#id_transportadora option')[i].value));
+                    trans_options = trans_options.map(i=>Number(i));        
+                }
+            }
+            
+            for (var i = 0; i < $('#id_endereco').prop('options').length; i++){
+                if ($('#id_endereco option')[i].value !== '') {
+                    endereco_options.push(($('#id_endereco option')[i].value));
+                    endereco_options = endereco_options.map(i=>Number(i));        
+                    
+                }
+            }
+            
+            for (var i = 0; i < $('#id_cliente').prop('options').length; i++){
+                if ($('#id_cliente option')[i].value !== '') {
+                    cliente_options.push(($('#id_cliente option')[i].value));
+                    cliente_options = cliente_options.map(i=>Number(i));        
+                }
+            }
+
+            for (var i = 0; i < $('#id_fazenda').prop('options').length; i++){
+                if ($('#id_fazenda option')[i].value !== '') {
+                    fazenda_options.push(($('#id_fazenda option')[i].value));
+                    fazenda_options = fazenda_options.map(i=>Number(i));
+                }
+            }
+
+            for(var i = 0; i < data.length; i++) {
+                if(data[i].model == 'vendas.condicaopagamento'){
+                    cond_pagamento.push(data[i]);
+                }
+            }
+            
+            for(var i = 0; i < cond_pagamento.length; i++){
+                if ($('#id_cond_pagamento').prop('options').length < cond_pagamento.length + 1 && cond_pag_options.includes(cond_pagamento[i].pk) === false){
+                    $('#id_cond_pagamento').append($('<option></option>').prop("value",cond_pagamento[i].pk).text(cond_pagamento[i].fields.descricao)); 
+                }
+            }
+
+            for(var i = 0; i < data.length; i++) {
+                if(data[i].model == 'cadastro.transportadora'){
+                    trans.push(data[i]);
+                }
+            }
+            
+            for(var i = 0; i < trans.length; i++){
+                if ($('#id_transportadora').prop('options').length < trans.length + 1 && trans_options.includes(trans[i].pk) === false){
+                    $('#id_transportadora').append($('<option></option>').prop("value",trans[i].pk).text(trans[i].fields.nome));
+                }
+            }
+
+            for(var i = 0; i < data.length; i++) {
+                if(data[i].model == 'cadastro.endereco'){
+                    enderecos.push(data[i]);
+                }
+            }
+            
+            for(var i = 0; i < enderecos.length; i++){
+                if ($('#id_endereco').prop('options').length < enderecos.length + 1 && endereco_options.includes(enderecos[i].pk) === false){
+                    $('#id_endereco').append($('<option></option>').prop("value",enderecos[i].pk).text(enderecos[i].fields.tipo_endereco));
+                }
+            }
+            
+            for(var i = 0; i < data.length; i++) {
+                if(data[i].model == 'cadastro.pessoa'){
+                    clientes.push(data[i]);
+                }
+            }
+            
+            for(var i = 0; i < clientes.length; i++){
+                if ($('#id_cliente').prop('options').length < clientes.length + 1 && cliente_options.includes(clientes[i].pk) === false){
+                    $('#id_cliente').append($('<option></option>').prop("value",clientes[i].pk).text(clientes[i].fields.nome_razao_social));
+                }
+            }
+            
+            for(var i = 0; i < data.length; i++) {
+                if(data[i].model == 'cadastro.fazenda'){
+                    fazendas.push(data[i]);
+                }
+            }
+            
+            for(var i = 0; i < fazendas.length; i++){
+                if ($('#id_fazenda').prop('options').length < fazendas.length + 1 && fazenda_options.includes(data[i].pk) === false){
+                    $('#id_fazenda').append($('<option></option>').prop("value",fazendas[i].pk).text(fazendas[i].fields.nome));
+                }
+            }
+        }   
+    }
 }
 
 $.Admin.compraForm = {
@@ -3350,7 +3485,7 @@ $.Admin.notaFiscalForm = {
                 for (var i = 0; i < $('#id_fazenda').prop('options').length; i++){
                     if ($('#id_fazenda option')[i].value !== '') {
                         select_options.push(($('#id_fazenda option')[i].value));
-                        select_options = select_options.map(i=>Number(i));   
+                        select_options = select_options.map(i=>Number(i));
                     }
                 }
 

@@ -74,10 +74,11 @@ class ReportVenda:
                 self.plot.drawString(self.eixo_x, self.eixo_y, f"Data vencimento: {self.venda.data_vencimento.strftime('%d/%m/%Y')}")
         if isinstance(self.venda, PedidoVenda):
             self.plot.drawString(self.eixo_x, self.eixo_y, self.title)
-            self.plot.setFont("Helvetica", 9)
-            self.eixo_x += 35
-            self.eixo_y -= 15
-            self.plot.drawString(self.eixo_x, self.eixo_y, f"Data: {self.venda.data_emissao.strftime('%d/%m/%Y')}")
+            if self.venda.data_emissao:
+                self.plot.setFont("Helvetica", 9)
+                self.eixo_x += 35
+                self.eixo_y -= 15
+                self.plot.drawString(self.eixo_x, self.eixo_y, f"Data: {self.venda.data_emissao.strftime('%d/%m/%Y')}")
         
         self.plot.line(0, 720, 535, 720)
 
@@ -88,8 +89,7 @@ class ReportVenda:
         self.eixo_x = 6
         self.eixo_y = 700
         if self.venda.fazenda != None:
-            self.venda.cliente.nome_razao_social = f"{self.venda.cliente.nome_razao_social} \
-                                                    {self.venda.fazenda.nome_impressao_nota}"
+            self.venda.cliente.nome_razao_social = f"{self.venda.cliente.nome_razao_social} {self.venda.fazenda.nome_impressao_nota}"
             if len(self.venda.cliente.nome_razao_social) > 20:
                 line = simpleSplit(self.venda.cliente.nome_razao_social, 
                                     fontName='Times-Bold', fontSize=13, maxWidth=20)
@@ -128,8 +128,7 @@ class ReportVenda:
             self.plot.drawString(430, self.eixo_y, f"CEP: {self.venda.fazenda.cep}")
             self.eixo_y -= 15
         else:
-            self.plot.drawString(6, self.eixo_y, f"Endereço: {self.venda.cliente.endereco_padrao.logradouro},\
-                                 {self.venda.cliente.endereco_padrao.numero} - {self.venda.cliente.endereco_padrao.bairro}")
+            self.plot.drawString(6, self.eixo_y, f"Endereço: {self.venda.cliente.endereco_padrao.logradouro}, {self.venda.cliente.endereco_padrao.numero} - {self.venda.cliente.endereco_padrao.bairro}")
             self.eixo_y -= 15
             self.plot.drawString(6, self.eixo_y,f"Cidade: {self.venda.cliente.endereco_padrao.municipio}")
             self.plot.drawString(230, self.eixo_y,f"UF: {self.venda.cliente.endereco_padrao.uf}")
@@ -330,9 +329,10 @@ class ReportVenda:
 
         self.plot.setFont(self.itens_font_name, self.itens_font_size)
         self.eixo_x = 10
-        self.plot.drawString(self.eixo_x, self.eixo_y, f"Forma pagamento: {self.venda.cond_pagamento.get_forma_display()}")
-        self.eixo_y -= 10
-        self.plot.drawString(self.eixo_x, self.eixo_y, f"Nº de parcelas: {self.venda.cond_pagamento.n_parcelas}")
+        if self.venda.cond_pagamento:
+            self.plot.drawString(self.eixo_x, self.eixo_y, f"Forma pagamento: {self.venda.cond_pagamento.get_forma_display()}")
+            self.eixo_y -= 10
+            self.plot.drawString(self.eixo_x, self.eixo_y, f"Nº de parcelas: {self.venda.cond_pagamento.n_parcelas}")
         self.plot.setFont(self.subtitle_font_name, self.subtitle_font_size)
         self.eixo_x = 100
         self.eixo_y -= 30

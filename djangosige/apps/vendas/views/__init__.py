@@ -7,4 +7,4 @@ from .vendas import (AdicionarOrcamentoVendaView, AdicionarPedidoVendaView, Orca
                      CancelarPedidoVendaView, GerarCopiaOrcamentoVendaView, GerarCopiaPedidoVendaView,
                      GerarPDFOrcamentoVenda, GerarPDFPedidoVenda)
 from .pagamento import *
-from .ajax_views import InfoVenda
+from .ajax_views import InfoVenda, RefreshForm

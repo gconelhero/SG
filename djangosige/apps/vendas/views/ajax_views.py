@@ -4,8 +4,10 @@ from django.views.generic import View
 from django.http import HttpResponse
 
 import json
+from django.core import serializers
 
-from djangosige.apps.vendas.models import PedidoVenda
+from djangosige.apps.vendas.models import PedidoVenda, CondicaoPagamento
+from djangosige.apps.cadastro.models import Pessoa, Cliente, Fazenda, Endereco, Transportadora 
 
 
 class InfoVenda(View):
@@ -131,3 +133,37 @@ class InfoVenda(View):
             data.append(pagamento_dict)
 
         return HttpResponse(json.dumps(data), content_type='application/json')
+
+
+class RefreshForm(View):
+
+    def post(self, request, *args, **kwargs):
+        obj_list = []
+        transport = []
+        clientes = Cliente.objects.all()
+
+        if request.POST['pessoaId']:
+            fazendas = Fazenda.objects.all().filter(pessoa_faz=request.POST['pessoaId'])
+            enderecos = Endereco.objects.all().filter(pessoa_end=request.POST['pessoaId'])
+        else:
+            fazendas = False
+            enderecos = False
+
+        transportadoras = Transportadora.objects.all()
+        
+        cond_pag = CondicaoPagamento.objects.all()
+
+        if clientes:
+            obj_list += [pessoa.pessoa_ptr for pessoa in clientes]
+        if fazendas:
+            obj_list += [faz for faz in fazendas]
+        if enderecos:
+            obj_list += [end for end in enderecos]        
+        if cond_pag:
+            obj_list += [cond for cond in cond_pag]
+
+        obj_list += [trans for trans in transportadoras]
+
+        data = serializers.serialize('json', obj_list, fields=('id', 'descricao', 'nome', 'tipo_endereco','nome_razao_social'))
+        
+        return HttpResponse(data, content_type='application/json')

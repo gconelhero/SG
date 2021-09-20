@@ -60,7 +60,7 @@ class EditarTransportadoraView(EditarPessoaView):
     model = Transportadora
     template_name = "cadastro/pessoa_edit.html"
     success_url = reverse_lazy('cadastro:listatransportadorasview')
-    success_message = "Transportadora <b>%(nome_razao_social)s</b>editada com sucesso."
+    success_message = "Transportadora <b>%(nome_razao_social)s</b> editada com sucesso."
     permission_codename = 'change_transportadora'
 
     def get_context_data(self, **kwargs):
