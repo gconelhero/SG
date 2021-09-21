@@ -54,7 +54,6 @@ urlpatterns = [
     url(r'infocondpagamento/$', views.InfoCondicaoPagamento.as_view(),
         name='infocondpagamento'),
     url(r'infovenda/$', views.InfoVenda.as_view(), name='infovenda'),
-    url(r'refreshform/', views.RefreshForm.as_view(), name='refreshform'),
 
     # Gerar pdf orcamento
     url(r'gerarpdforcamentovenda/(?P<pk>[0-9]+)/$',

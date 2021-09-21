@@ -6,6 +6,9 @@ from django.core import serializers
 
 from djangosige.apps.cadastro.models import Pessoa, Fazenda, Cliente, Fornecedor, Transportadora, Produto, Endereco
 from djangosige.apps.fiscal.models import ICMS, ICMSSN, IPI, ICMSUFDest, GrupoFiscal
+from djangosige.apps.vendas.models import CondicaoPagamento
+
+import json
 
 class InfoCliente(View):
 
@@ -160,3 +163,79 @@ class InfoProduto(View):
         except Exception as erro:
             print(erro, "PRODUTO NÃO ENCONTRADO")
             pass
+
+
+class SelectFormProduto(View):
+
+    def get(self, request, *args, **kwargs):
+        produtos = []
+        obj_list = []
+        if request.is_ajax():
+            term = request.GET.get('term')
+            if term != None:
+                q_one = Produto.objects.all().filter(codigo__icontains=term)
+                q_two = Produto.objects.all().filter(descricao__icontains=term)
+                produtos = [prod for prod in q_one.union(q_two)]
+            else:
+                produtos = [prod for prod in Produto.objects.all()]
+
+            obj_list = [{'id': i.id, 'codigo': i.codigo, 'descricao': i.descricao} for i in produtos]
+
+        else:
+            return HttpResponse('Utilização incorreta.')
+        
+        return HttpResponse(json.dumps(obj_list), content_type='application/json')
+
+
+class SelectFormCliente(View):
+
+    def get(self, request, *args, **kwargs):
+        obj_list = []
+        if request.is_ajax():
+            term = request.GET.get('term')
+            if term != None:
+
+                clientes = [prod for prod in Cliente.objects.filter(nome_razao_social__icontains=term)]
+            else:
+                clientes = [prod for prod in Cliente.objects.all()]
+
+            obj_list = [{'id': i.id, 'nome_razao_social': i.nome_razao_social} for i in clientes]
+
+        else:
+            return HttpResponse('Utilização incorreta.')
+        
+        return HttpResponse(json.dumps(obj_list), content_type='application/json')
+
+
+class RefreshForm(View):
+
+    def post(self, request, *args, **kwargs):
+        obj_list = []
+        transport = []
+        clientes = Cliente.objects.all()
+
+        if request.POST['pessoaId']:
+            fazendas = Fazenda.objects.all().filter(pessoa_faz=request.POST['pessoaId'])
+            enderecos = Endereco.objects.all().filter(pessoa_end=request.POST['pessoaId'])
+        else:
+            fazendas = False
+            enderecos = False
+
+        transportadoras = Transportadora.objects.all()
+        
+        cond_pag = CondicaoPagamento.objects.all()
+
+        if clientes:
+            obj_list += [pessoa.pessoa_ptr for pessoa in clientes]
+        if fazendas:
+            obj_list += [faz for faz in fazendas]
+        if enderecos:
+            obj_list += [end for end in enderecos]        
+        if cond_pag:
+            obj_list += [cond for cond in cond_pag]
+
+        obj_list += [trans for trans in transportadoras]
+
+        data = serializers.serialize('json', obj_list, fields=('id', 'descricao', 'nome', 'tipo_endereco','nome_razao_social'))
+        
+        return HttpResponse(data, content_type='application/json')

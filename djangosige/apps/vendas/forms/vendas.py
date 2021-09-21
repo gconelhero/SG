@@ -42,7 +42,7 @@ class VendaForm(forms.ModelForm):
 
         widgets = {
             'data_emissao': forms.DateInput(attrs={'class': 'form-control datepicker', 'autocomplete': 'off'}),
-            'cliente': forms.Select(attrs={'class': 'form-control'}),
+            'cliente': forms.Select(attrs={'class': 'form-control select-cliente', 'style':'width:100%'}),
             'fazenda': forms.Select(attrs={'class': 'form-control'}),
             'endereco': forms.Select(attrs={'class': 'form-control'}),
             'ind_final': forms. CheckboxInput(attrs={'class': 'form-control'}),

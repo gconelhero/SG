@@ -1033,8 +1033,43 @@ $.Admin.vendaForm = {
         
         // TESTE COM SELECT2
         $(document).ready(function(){
-            $('.select-produto').select2();
+            $('.select-produto').select2({
+                ajax: {
+                    url: '/cadastro/selectproduto',
+                    dataType: 'json',
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item){
+                                return {id: item.id, codigo: item.codigo, text: item.descricao};
 
+                            })
+                        };
+                    }
+                },
+                placeholder: "Selecione um produto",
+                //allowClear: true, // Permitr campo em branco
+                theme: 'classic',
+            });
+
+        });
+        
+        $(document).ready(function(){
+            $('#id_cliente').select2({
+                ajax: {
+                    url: '/cadastro/selectcliente',
+                    dataType: 'json',
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(cliente){
+                                return {id: cliente.id, text: cliente.nome_razao_social};
+                            }),
+                        };
+                    }
+                },
+                //placeholder: "Selecione o cliente",
+                //allowClear: true,
+                theme: 'classic',
+            });
         });
 
         $(document).on('focus', '.decimal-mask', function(){

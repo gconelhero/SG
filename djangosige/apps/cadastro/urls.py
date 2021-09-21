@@ -97,11 +97,16 @@ urlpatterns = [
     url(r'outros/editarmarca/(?P<pk>[0-9]+)/$',
         views.EditarMarcaView.as_view(), name='editarmarcaview'),
 
-    # Informacoes de dada empresa (Ajax request)
+    # AJAX:: Informacoes de dada empresa (Ajax request)
     url(r'infoempresa/$', views.InfoEmpresa.as_view(), name='infoempresa'),
     url(r'infofornecedor/$', views.InfoFornecedor.as_view(), name='infofornecedor'),
     url(r'infocliente/$', views.InfoCliente.as_view(), name='infocliente'),
     url(r'infotransportadora/$', views.InfoTransportadora.as_view(),
         name='infotransportadora'),
     url(r'infoproduto/$', views.InfoProduto.as_view(), name='infoproduto'),
+    # Filtro Ajax+Select2 no form de produtos (filtrar por descrição e código)
+    url(r'selectproduto/', views.SelectFormProduto.as_view(), name='selectproduto'),
+    # Filtro Ajax+Select2 no form de produtos (filtrar por descrição e código)
+    url(r'selectcliente/', views.SelectFormCliente.as_view(), name='selectcliente'),
+    url(r'refreshform/', views.RefreshForm.as_view(), name='refreshform'),
 ]
