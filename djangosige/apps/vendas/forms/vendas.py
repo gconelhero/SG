@@ -41,7 +41,7 @@ class VendaForm(forms.ModelForm):
                   'movimentar_estoque', 'tipo_desconto', 'frete', 'despesas', 'seguro', 'impostos', 'valor_total', 'cond_pagamento', 'observacoes',)
 
         widgets = {
-            'data_emissao': forms.DateInput(attrs={'class': 'form-control datepicker'}),
+            'data_emissao': forms.DateInput(attrs={'class': 'form-control datepicker', 'autocomplete': 'off'}),
             'cliente': forms.Select(attrs={'class': 'form-control'}),
             'fazenda': forms.Select(attrs={'class': 'form-control'}),
             'endereco': forms.Select(attrs={'class': 'form-control'}),
@@ -93,7 +93,7 @@ class OrcamentoVendaForm(VendaForm):
         fields = VendaForm.Meta.fields + ('data_vencimento', 'status',)
         widgets = VendaForm.Meta.widgets
         widgets['data_vencimento'] = forms.DateInput(
-            attrs={'class': 'form-control datepicker'})
+            attrs={'class': 'form-control datepicker', 'autocomplete': 'off'})
         widgets['status'] = forms.Select(
             attrs={'class': 'form-control', 'disabled': True})
         labels = VendaForm.Meta.labels
@@ -118,8 +118,6 @@ class PedidoVendaForm(VendaForm):
         labels['data_entrega'] = _('Data de Entrega')
         labels['status'] = _('Status')
         labels['orcamento'] = _('Orçamento')
-
-        
 
 
 class ItensVendaForm(forms.ModelForm):
@@ -184,6 +182,7 @@ class ItensVendaForm(forms.ModelForm):
         self.fields['p_icms'].localize = True
         self.fields['p_ipi'].localize = True
 
+
     class Meta:
         model = ItensVenda
         fields = ('produto', 'grupo_fiscal', 'cfop_produto','quantidade', 'valor_unit', 'tipo_desconto', 'desconto', 'valor_rateio_frete', 'valor_rateio_despesas', 'valor_rateio_seguro',
@@ -192,13 +191,13 @@ class ItensVendaForm(forms.ModelForm):
                   'ipi_incluido_preco', 'icms_incluido_preco', 'icmsst_incluido_preco', 'incluir_bc_icms', 'incluir_bc_icmsst', 'auto_calcular_impostos',)
 
         widgets = {
-            'produto': forms.Select(attrs={'class': 'form-control select-produto'}),
+            'produto': forms.Select(attrs={'class': 'form-control select-produto', 'style':'width:250px'}),
             'grupo_fiscal': forms.Select(attrs={'class': 'form-control select-grupo_fiscal'}),
             'cfop_produto': forms.Select(attrs={'class': 'form-control select-cfop_produto'}),
             'quantidade': forms.TextInput(attrs={'class': 'form-control decimal-mask'}),
             'valor_unit': forms.TextInput(attrs={'class': 'form-control decimal-mask'}),
             'subtotal': forms.TextInput(attrs={'class': 'form-control decimal-mask', 'readonly': True}),
-            'tipo_desconto': forms.Select(attrs={'class': 'form-control'}),
+            'tipo_desconto': forms.Select(attrs={'class': 'form-control', 'style':'width:110px'}),
             'desconto': forms.TextInput(attrs={'class': 'form-control decimal-mask'}),
 
             'valor_rateio_frete': forms.TextInput(attrs={'class': 'form-control decimal-mask'}),

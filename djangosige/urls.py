@@ -4,8 +4,10 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.conf.urls.static import static
 from .configs.settings import DEBUG, MEDIA_ROOT, MEDIA_URL
+from django.urls import path
 
 urlpatterns = [
+    path("select2/", include("django_select2.urls")),
     url(r'^admin/', admin.site.urls),
     url(r'^', include('djangosige.apps.base.urls')),
     url(r'^login/', include('djangosige.apps.login.urls')),

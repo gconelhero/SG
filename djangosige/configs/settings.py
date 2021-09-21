@@ -3,17 +3,13 @@ from decouple import config, Csv
 from dj_database_url import parse as dburl
 import django.contrib.sessions.backends.signed_cookies
 from .configs import DEFAULT_DATABASE_URL, DEFAULT_FROM_EMAIL, EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_PORT, EMAIL_USE_TLS
+from django.core.cache.backends.locmem import LocMemCache
 
 APP_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 PROJECT_ROOT = os.path.abspath(os.path.dirname(APP_ROOT))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=[], cast=Csv())
@@ -35,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
 
     # djangosige apps:
     'djangosige.apps.base',
@@ -45,6 +42,7 @@ INSTALLED_APPS = [
     'djangosige.apps.fiscal',
     'djangosige.apps.financeiro',
     'djangosige.apps.estoque',
+    
 ]
 
 
@@ -104,6 +102,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    },
+    "select2": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
+    }
+}
+
+SELECT2_CACHE_BACKEND = "select2"
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

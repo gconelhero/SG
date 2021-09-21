@@ -1030,6 +1030,12 @@ $.Admin.vendaForm = {
 
         _this.formTableInit();
         _this.alterarFieldsModal(true);
+        
+        // TESTE COM SELECT2
+        $(document).ready(function(){
+            $('.select-produto').select2();
+
+        });
 
         $(document).on('focus', '.decimal-mask', function(){
             $.Admin.maskInput.maskVenda();
