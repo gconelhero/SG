@@ -195,7 +195,7 @@ class ItensVendaForm(forms.ModelForm):
             'grupo_fiscal': forms.Select(attrs={'class': 'form-control select-grupo_fiscal'}),
             'cfop_produto': forms.Select(attrs={'class': 'form-control select-cfop_produto'}),
             'quantidade': forms.TextInput(attrs={'class': 'form-control decimal-mask'}),
-            'valor_unit': forms.TextInput(attrs={'class': 'form-control decimal-mask'}),
+            'valor_unit': forms.TextInput(attrs={'class': 'form-control decimal-mask', 'placeholder':'R$ 0,00'}),
             'subtotal': forms.TextInput(attrs={'class': 'form-control decimal-mask', 'readonly': True}),
             'tipo_desconto': forms.Select(attrs={'class': 'form-control', 'style':'width:110px'}),
             'desconto': forms.TextInput(attrs={'class': 'form-control decimal-mask'}),

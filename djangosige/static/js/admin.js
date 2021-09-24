@@ -1,6 +1,7 @@
 if (typeof jQuery === "undefined") {
     throw new Error("Carregar JQuery antes deste arquivo.");
 }
+    
 
 $.Admin = {};
 
@@ -257,7 +258,6 @@ $.Admin.formset = {
     init: function() {
         var _this = this;
         var $formset_box = $('.formset-box');
-
         $formset_box.each(function(){
             var currentBox = $(this);
             var formsetPrefix = currentBox.find('.formset:last').prop('id');
@@ -288,6 +288,9 @@ $.Admin.formset = {
                 //Esconder add e remove do penultimo form
                 $(this).hide();
                 parentFormset.next().trigger('formCreated');
+                //var teste = $('div[id$=produtos_form-'+i+']').find('select[id$='+i+'-produto]')
+                
+
             });
 
             //Remover formset
@@ -363,7 +366,8 @@ $.Admin.formset = {
             }
 
         });
-
+        
+        
         //Trocar atributos for dos labels
         newForm.find('label').each(function() {
             var newFor = $(this).prop('for');
@@ -378,7 +382,9 @@ $.Admin.formset = {
         });
         newForm.show();
         newForm.insertAfter(parentFormset);
+
     },
+    
 
     createNewTrForms: function(table, n_new_forms){
         var startFrom = 0;
@@ -441,7 +447,9 @@ $.Admin.formset = {
 
             //Adicionar form ao manager
             $('#id_' + formsetPrefix + '-TOTAL_FORMS').val(parseInt(n_new_forms) + startFrom);
+            
         }
+        
     },
 }
 
@@ -1003,6 +1011,47 @@ $.Admin.autocompleteField = {
     }
 }
 
+// INICIALIZA A INSTÂNCIA DO SELECT2 PARA FORMSET DE PRODUTOS VENDA/ORÇAMENTO
+function initializeSelect2Produto(selectElementObj) {
+    selectElementObj.select2({
+        ajax: {
+            url: '/cadastro/selectproduto',
+            dataType: 'json',
+            processResults: function(data) {
+                return {
+                    results: $.map(data, function(item){
+                        return {id: item.id, codigo: item.codigo, text: item.descricao};
+
+                    })
+                };
+            }
+        },
+        placeholder: "Selecione um produto",
+        //allowClear: true, // Permitr campo em branco
+        theme: 'classic',
+    });
+}
+// INICIALIZA A INSTÂNCIA DO SELECT2 DE CLIENTES VENDA/ORÇAMENTO
+function initializeSelect2Cliente(selectElementObj, modeloUrl) {
+    $(document).ready(function(){
+        $(selectElementObj).select2({
+            ajax: {
+                url: modeloUrl,//'/cadastro/selectcliente',
+                dataType: 'json',
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(cliente){
+                            return {id: cliente.id, text: cliente.nome_razao_social};
+                        }),
+                    };
+                }
+            },
+            //placeholder: "Selecione o cliente",
+            //allowClear: true,
+            theme: 'classic',
+        });
+    });
+}
 
 $.Admin.vendaForm = {
     init: function(req_urls) {
@@ -1030,47 +1079,10 @@ $.Admin.vendaForm = {
 
         _this.formTableInit();
         _this.alterarFieldsModal(true);
-        
-        // TESTE COM SELECT2
-        $(document).ready(function(){
-            $('.select-produto').select2({
-                ajax: {
-                    url: '/cadastro/selectproduto',
-                    dataType: 'json',
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item){
-                                return {id: item.id, codigo: item.codigo, text: item.descricao};
 
-                            })
-                        };
-                    }
-                },
-                placeholder: "Selecione um produto",
-                //allowClear: true, // Permitr campo em branco
-                theme: 'classic',
-            });
-
-        });
-        
-        $(document).ready(function(){
-            $('#id_cliente').select2({
-                ajax: {
-                    url: '/cadastro/selectcliente',
-                    dataType: 'json',
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(cliente){
-                                return {id: cliente.id, text: cliente.nome_razao_social};
-                            }),
-                        };
-                    }
-                },
-                //placeholder: "Selecione o cliente",
-                //allowClear: true,
-                theme: 'classic',
-            });
-        });
+        // SELECT2
+        initializeSelect2Produto($('.select-produto'));
+        initializeSelect2Cliente($('#id_cliente'), '/cadastro/selectcliente');
 
         $(document).on('focus', '.decimal-mask', function(){
             $.Admin.maskInput.maskVenda();
@@ -1276,10 +1288,11 @@ $.Admin.vendaForm = {
         /*  Eventos  */
 
         //Caso campo esteja vazio manter 0
+        /*
         $(document).on('change keyup', 'input[id$=-quantidade],input[id$=-valor_unit],input[id$=desconto],input[id$=frete],input[id$=despesas],input[id$=seguro],.imposto_modal .decimal-mask,.imposto_modal .decimal-mask-no-dot', function(){
             if(!$(this).val()) $(this).val('0');
         });
-
+        */
         //Ratear valores
         $('#ratear_valores_btn').on('click', function(){
             _this.ratearValores();
@@ -2090,6 +2103,7 @@ $.Admin.vendaForm = {
         if(!initial){
             // Implementação para não alterar a quantidade de um produto quando mudar o grupo fiscal.
             //form_atual.find('input[type=text]').val('0');
+            
             var quantidade_atual = form_atual.find('input[id$=-quantidade]').val()
 
             if(quantidade_atual !== '1'){
@@ -2341,6 +2355,8 @@ $.Admin.refreshForm = {
         $.Admin.ajaxRequest.ajaxPostRequest(req_refresh['refresh_form'], postData, _this.refreshForm);
     },
 
+
+
     refreshForm: function(data) {
         if(typeof data === 'undefined' || !data){
             return;
@@ -2477,6 +2493,9 @@ $.Admin.compraForm = {
 
         $.Admin.vendaForm.formTableInit();
         $.Admin.vendaForm.alterarFieldsModal(true);
+
+        initializeSelect2Produto($('.select-produto'));
+        initializeSelect2Cliente($('#id_fornecedor'), '/cadastro/selectfornecedor');
 
         for_input.on('change', function(){
             if($(this).val()){
@@ -2937,6 +2956,76 @@ $.Admin.compraForm = {
     },
 }
 
+// ADICIONANDO OPÇÕES INSERIDAS APÓS INSTÂNCIA DA VENDA/ORCAMENTO (SEM TER QUE REABRIR A VENDA/ORCAMENTO)
+$.Admin.refreshFormCompra = {
+    init: function(req_refresh){
+        var _this = this
+
+        if ($('#id_fornecedor').val()){
+            var postData = {
+                'csrfmiddlewaretoken' : $.Admin.cookies.getCookie('csrftoken'),
+                'pessoaId': $('#id_fornecedor').val()
+            }
+        }else{
+            var postData = {
+                'csrfmiddlewaretoken' : $.Admin.cookies.getCookie('csrftoken'),
+                'pessoaId': ''
+            }
+        }
+        $.Admin.ajaxRequest.ajaxPostRequest(req_refresh['refresh_form_compra'], postData, _this.refreshFormCompra);
+    },
+
+    refreshFormCompra: function(data) {
+        if(typeof data === 'undefined' || !data){
+            return;
+        }else{
+            var fornecedores = []
+            var fornecedor_options = []
+            var cond_pagamento = []
+            var cond_pag_options = []
+
+            for (var i = 0; i < $('#id_cond_pagamento').prop('options').length; i++){
+                if ($('#id_cond_pagamento option')[i].value !== '') {
+                    cond_pag_options.push(($('#id_cond_pagamento option')[i].value));
+                    cond_pag_options = cond_pag_options.map(i=>Number(i));
+                }
+            }
+
+            for (var i = 0; i < $('#id_fornecedor').prop('options').length; i++){
+                if ($('#id_fornecedor option')[i].value !== '') {
+                    fornecedor_options.push(($('#id_fornecedor option')[i].value));
+                    fornecedor_options = fornecedor_options.map(i=>Number(i));
+                }
+            }
+
+            for(var i = 0; i < data.length; i++) {
+                if(data[i].model == 'vendas.condicaopagamento'){
+                    cond_pagamento.push(data[i]);
+                }
+            }
+            
+            for(var i = 0; i < cond_pagamento.length; i++){
+                if ($('#id_cond_pagamento').prop('options').length < cond_pagamento.length + 1 && cond_pag_options.includes(cond_pagamento[i].pk) === false){
+                    $('#id_cond_pagamento').append($('<option></option>').prop("value",cond_pagamento[i].pk).text(cond_pagamento[i].fields.descricao)); 
+                }
+            }
+
+            for(var i = 0; i < data.length; i++) {
+                if(data[i].model == 'cadastro.pessoa'){
+                    fornecedores.push(data[i]);
+                }
+            }
+            
+            for(var i = 0; i < fornecedores.length; i++){
+                if ($('#id_fornecedor').prop('options').length < fornecedores.length + 1 && fornecedor_options.includes(fornecedores[i].pk) === false){
+                    $('#id_fornecedor').append($('<option></option>').prop("value",fornecedores[i].pk).text(fornecedores[i].fields.nome_razao_social));
+                }
+            }
+            
+        }   
+    }
+}
+
 
 $.Admin.movimentoEstoqueForm = {
     init: function(req_urls){
@@ -3161,11 +3250,14 @@ $.Admin.lancamentoForm = {
         _this.calcularTotalLiquido();
 
         $(document).on('change keyup paste', '#id_valor_total,#id_abatimento,#id_juros,#id_valor_liquido', function(){
+            /*
             if(!$(this).val()){
                 $(this).val('0,00');
             }
+            COMENTADO PARA PODER APAGAR OS CAMPOS DETERMINNADOS*/
             _this.calcularTotalLiquido();
         });
+        
 
         $('#pagar_conta,#receber_conta').on('click', function(){
             $('.modal_selecionar_data').modal('show');
@@ -3203,7 +3295,7 @@ $.Admin.lancamentoForm = {
         var vliquido = 0;
 
         vliquido = parseFloat(vbruto) - parseFloat(vabatimento) + parseFloat(vjuros);
-        vl_input.val(vliquido.toString().replace('.',','));
+        vl_input.val(parseFloat(vliquido).toFixed(2).toString().replace('.',','));
     },
 
     handleGerarLancamento: function(data){
@@ -3687,6 +3779,7 @@ $.Admin.notaFiscalForm = {
     
 
     handleVendaInfo: function(data, initial){
+
         if(typeof data === 'undefined' || !data){
             $('.display-venda-field').text('');
             $('#itens_table > tbody').empty();
@@ -4039,4 +4132,24 @@ $(function () {
     $.Admin.dinamicMenu.init();
 
     setTimeout(function () { $('.page-loader-wrapper').fadeOut(); }, 50);
+});
+
+
+
+
+
+// SLEEP MILISEC
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+};
+// SELECT2 FORMSET
+var forms_sets = $('div .formset').length
+$('.add-formset').on('click', async function(){
+    forms_sets += 1
+    await sleep(2)
+    for (var i = 0; i < forms_sets; i++){
+        initializeSelect2Produto($('.select-produto'));
+    }
+    var span_dp = $('div.formset:last span.select2:last')
+    span_dp.remove();
 });

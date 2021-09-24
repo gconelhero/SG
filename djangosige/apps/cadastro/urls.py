@@ -108,5 +108,7 @@ urlpatterns = [
     url(r'selectproduto/', views.SelectFormProduto.as_view(), name='selectproduto'),
     # Filtro Ajax+Select2 no form de produtos (filtrar por descrição e código)
     url(r'selectcliente/', views.SelectFormCliente.as_view(), name='selectcliente'),
+    url(r'selectfornecedor/', views.SelectFormFornecedor.as_view(), name='selectfornecedor'),
     url(r'refreshform/', views.RefreshForm.as_view(), name='refreshform'),
+    url(r'refreshformcompra/', views.RefreshForm.as_view(), name='refreshformcompra'),
 ]

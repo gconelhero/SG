@@ -8,4 +8,4 @@ from .produto import (AdicionarProdutoView, ProdutosListView, ProdutosBaixoEstoq
                       AdicionarCategoriaView, CategoriasListView, EditarCategoriaView,
                       AdicionarUnidadeView, UnidadesListView, EditarUnidadeView,
                       AdicionarMarcaView, MarcasListView, EditarMarcaView)
-from .ajax_views import InfoCliente, InfoFornecedor, InfoEmpresa, InfoTransportadora, InfoProduto, SelectFormProduto, SelectFormCliente, RefreshForm
+from .ajax_views import InfoCliente, InfoFornecedor, InfoEmpresa, InfoTransportadora, InfoProduto, SelectFormProduto, SelectFormCliente, SelectFormFornecedor, RefreshForm, RefreshFormCompra

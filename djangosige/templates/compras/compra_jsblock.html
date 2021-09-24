@@ -15,3 +15,9 @@
     req_urls.info_pagamento_url = "{% url 'vendas:infocondpagamento' %}"
     $.Admin.compraForm.init(req_urls);
   </script>
+
+<script type="text/javascript">
+  var req_refresh = {}
+  req_refresh.refresh_form_compra = "{% url 'cadastro:refreshformcompra' %}"
+  $.Admin.refreshFormCompra.init(req_refresh);
+</script>

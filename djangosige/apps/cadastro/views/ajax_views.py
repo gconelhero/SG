@@ -206,6 +206,25 @@ class SelectFormCliente(View):
         
         return HttpResponse(json.dumps(obj_list), content_type='application/json')
 
+class SelectFormFornecedor(View):
+
+    def get(self, request, *args, **kwargs):
+        obj_list = []
+        if request.is_ajax():
+            term = request.GET.get('term')
+            if term != None:
+
+                fornecedores = [prod for prod in Fornecedor.objects.filter(nome_razao_social__icontains=term)]
+            else:
+                fornecedores = [prod for prod in Fornecedor.objects.all()]
+
+            obj_list = [{'id': i.id, 'nome_razao_social': i.nome_razao_social} for i in fornecedores]
+
+        else:
+            return HttpResponse('Utilização incorreta.')
+        
+        return HttpResponse(json.dumps(obj_list), content_type='application/json')
+
 
 class RefreshForm(View):
 
@@ -237,5 +256,27 @@ class RefreshForm(View):
         obj_list += [trans for trans in transportadoras]
 
         data = serializers.serialize('json', obj_list, fields=('id', 'descricao', 'nome', 'tipo_endereco','nome_razao_social'))
+        
+        return HttpResponse(data, content_type='application/json')
+
+class RefreshFormCompra(View):
+
+    def post(self, request, *args, **kwargs):
+        obj_list = []
+        transport = []
+        fornecedores = Fornecedor.objects.all()
+
+        transportadoras = Transportadora.objects.all()
+        
+        cond_pag = CondicaoPagamento.objects.all()
+
+        if fornecedores:
+            obj_list += [pessoa.pessoa_ptr for pessoa in fornecedores]
+        if cond_pag:
+            obj_list += [cond for cond in cond_pag]
+
+        obj_list += [trans for trans in transportadoras]
+
+        data = serializers.serialize('json', obj_list, fields=('id', 'descricao','nome_razao_social'))
         
         return HttpResponse(data, content_type='application/json')

@@ -23,6 +23,7 @@
               {% if object.status == '0' %}
               <a id="faturar_pedido" href="{% url 'financeiro:faturarpedidocompra' object.id %}" class="btn btn-success">REALIZAR PEDIDO</a>
               <a id="cancelar_pedido_compra" href="{% url 'compras:cancelarpedidocompra' object.id %}" class="btn btn-red">CANCELAR</a>
+              <a id="recarrega_option" href="#" class="btn btn-primary" onclick="$.Admin.refreshFormCompra.init(req_refresh);">RECARREGAR</a>
               {% elif object.status == '1'%}
               <a id="receber_pedido" href="{% url 'compras:receberpedidocompra' object.id %}" class="btn btn-success">RECEBER PEDIDO</a>
               {% endif %}

@@ -47,4 +47,5 @@ env/
 
 #AMAZON pull
 middleware.py
-.SG/configs/
+.SG/configs/*
+wsgi.py

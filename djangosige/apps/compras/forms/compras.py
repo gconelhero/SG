@@ -40,7 +40,7 @@ class CompraForm(forms.ModelForm):
 
         widgets = {
             'data_emissao': forms.DateInput(attrs={'class': 'form-control datepicker'}),
-            'fornecedor': forms.Select(attrs={'class': 'form-control'}),
+            'fornecedor': forms.Select(attrs={'class': 'form-control', 'style':'width:100%'}),
             'mod_frete': forms.Select(attrs={'class': 'form-control'}),
             'local_dest': forms.Select(attrs={'class': 'form-control'}),
             'movimentar_estoque': forms.CheckboxInput(attrs={'class': 'form-control'}),
@@ -152,7 +152,7 @@ class ItensCompraForm(forms.ModelForm):
                   'incluir_bc_icms', 'ipi_incluido_preco', 'icms_incluido_preco', 'auto_calcular_impostos',)
 
         widgets = {
-            'produto': forms.Select(attrs={'class': 'form-control select-produto'}),
+            'produto': forms.Select(attrs={'class': 'form-control select-produto', 'style':'width:250px'}),
             'quantidade': forms.TextInput(attrs={'class': 'form-control decimal-mask'}),
             'valor_unit': forms.TextInput(attrs={'class': 'form-control decimal-mask'}),
             'subtotal': forms.TextInput(attrs={'class': 'form-control decimal-mask', 'readonly': True}),
