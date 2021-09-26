@@ -288,9 +288,6 @@ $.Admin.formset = {
                 //Esconder add e remove do penultimo form
                 $(this).hide();
                 parentFormset.next().trigger('formCreated');
-                //var teste = $('div[id$=produtos_form-'+i+']').find('select[id$='+i+'-produto]')
-                
-
             });
 
             //Remover formset
@@ -319,11 +316,14 @@ $.Admin.formset = {
                     //Adicionar form ao manager
                     nFormsets++;
                     $('#id_' + formsetPrefix + '-TOTAL_FORMS').val(nFormsets);
+                    console.log($('#id_' + formsetPrefix + '-TOTAL_FORMS').val(nFormsets))
                 }else{
                     addBtn.show();
                 }
-
+                
                 parentFormset.trigger('formRemoved');
+                // REMOVE O ÚLTIMO SELECT2
+                $('div.formset:hidden span.select2:last').remove()
             });
         });
     },
@@ -563,7 +563,7 @@ $.Admin.pessoaForm = {
 
         $('.formset').on('change', 'select[id$=-uf]', function(event, mun_inicial){
             if ($(this).prop('name').match('endereco') == 'endereco'){
-                var form_number = $(this).prop('id').match(/\d/)[0];
+                var form_number = $(this).prop('id').match(/\d+/)[0];
                 var mun_input = $("#id_endereco_form-" + form_number + "-municipio");
                 mun_input.empty();
                 if($(this).val() && $(this).val() != 'EX'){
@@ -587,7 +587,7 @@ $.Admin.pessoaForm = {
 
         $('body').on('change', 'select[id$=-municipio]', function(){
             if ($(this).prop('name').match('endereco') == 'endereco'){
-                var form_number = $(this).prop('id').match(/\d/)[0];
+                var form_number = $(this).prop('id').match(/\d+/)[0];
                 var cmun_input = $("#id_endereco_form-" + form_number + "-cmun");
                 var cmun = $(this).find('option:selected').text().match(/\((.*)\)/);
                 cmun_input.val(cmun[1]);
@@ -597,7 +597,7 @@ $.Admin.pessoaForm = {
         
         $('.formset').on('change', 'select[id$=-uf]', function(event, mun_inicial){
             if ($(this).prop('name').match('fazenda') == 'fazenda'){
-                var form_number = $(this).prop('id').match(/\d/)[0];
+                var form_number = $(this).prop('id').match(/\d+/)[0];
                 var mun_input = $("#id_fazenda_form-" + form_number + "-municipio");
                 mun_input.empty();
                 if($(this).val() && $(this).val() != 'EX'){
@@ -622,7 +622,7 @@ $.Admin.pessoaForm = {
         $('body').on('change', 'select[id$=-municipio]', function(){
 
             if ($(this).prop('name').match('fazenda') == 'fazenda'){
-                var form_number = $(this).prop('id').match(/\d/)[0];
+                var form_number = $(this).prop('id').match(/\d+/)[0];
                 var cmun_input = $("#id_fazenda_form-" + form_number + "-cmun");
                 var cmun = $(this).find('option:selected').text().match(/\((.*)\)/);
                 cmun_input.val(cmun[1]);
@@ -1069,7 +1069,7 @@ $.Admin.vendaForm = {
         $('#id_valor_total_display').text($('#id_valor_total').val());
         //
         $('.formset[id^=produtos_form-]').each(function(){
-            var form_number = $(this).prop('id').match(/\d/)[0];
+            var form_number = $(this).prop('id').match(/\d+/)[0];
             if($(this).find('select[id$=-produto]').val().length === 0){
                 _this.setInitialItensData($(this));
             }
@@ -1200,7 +1200,7 @@ $.Admin.vendaForm = {
 
 
         produtos_input.on('change', function(event, initial){
-            var form_number = $(this).prop('id').match(/\d/)[0];
+            var form_number = $(this).prop('id').match(/\d+/)[0];
             if($(this).val()){
                 var postData = {
                     'produtoId': $(this).val(),
@@ -1247,7 +1247,7 @@ $.Admin.vendaForm = {
         
         // GRupo fiscal
         grupo_fiscal_input.on('change', function(event, initial){
-            var form_number = $(this).prop('id').match(/\d/)[0];
+            var form_number = $(this).prop('id').match(/\d+/)[0];
             
             if($(this).val()){
                 var postData = {
@@ -1299,8 +1299,8 @@ $.Admin.vendaForm = {
         });
 
         //Atualiza valor total por item e adicionais totais
-        $(document).on('load change keyup paste', 'input[id$=-quantidade],input[id$=-valor_unit],select[id$=-tipo_desconto],input[id$=-desconto],input[id$=-valor_rateio_frete],input[id$=-valor_rateio_despesas],input[id$=-valor_rateio_seguro]', function(){
-            var form_number = $(this).prop('id').match(/\d/)[0];
+        $(document).on('load change keyup paste', 'select[id$=-produto],input[id$=-quantidade],input[id$=-valor_unit],select[id$=-tipo_desconto],input[id$=-desconto],input[id$=-valor_rateio_frete],input[id$=-valor_rateio_despesas],input[id$=-valor_rateio_seguro]', function(){
+            var form_number = $(this).prop('id').match(/\d+/)[0];
             _this.setItensFields(form_number);
             _this.setAdicionaisTotal();
             $('#id_desconto').change();
@@ -1585,8 +1585,6 @@ $.Admin.vendaForm = {
                     }
 
                     desconto_input.change();
-                    $(this).find('input[id$=-subtotal]').change();
-                    console.log("RATEAR")
                 }
             }
         });
@@ -1611,7 +1609,6 @@ $.Admin.vendaForm = {
         var vtotal_impostos = 0;
         var vsubtotal_sem_desconto = 0;
         var vtotal_sem_impostos = 0;
-        console.log("SET")
 
         var vdesconto = parseFloat($(desconto).val().replace(/\./g,'').replace(',','.'));
         var vfrete = parseFloat(frete.val().replace(/\./g,'').replace(',','.'));
@@ -2098,7 +2095,6 @@ $.Admin.vendaForm = {
     handleProdutoInfo: function(data, form_number, initial){
         var val_unit = $('#id_produtos_form-'+ form_number + '-valor_unit');
         var form_atual = $('div[id=produtos_form-' +form_number+ ']');
-        
         //SETA O GRUPO FISCAL AUTOMATICAMENTE
         if(data){
             if(data[0].fields.grupo_fiscal === null) {
@@ -2501,7 +2497,7 @@ $.Admin.compraForm = {
         $('#id_valor_total_display').text($('#id_valor_total').val());
 
         $('.formset[id^=produtos_form-]').each(function(){
-            var form_number = $(this).prop('id').match(/\d/)[0];
+            var form_number = $(this).prop('id').match(/\d+/)[0];
             if($(this).find('select[id$=-produto]').val().length === 0){
                 $.Admin.vendaForm.setInitialItensData($(this));
             }
@@ -2543,7 +2539,7 @@ $.Admin.compraForm = {
         cond_pag_input.trigger('change', [true]);
 
         produtos_input.on('change', function(event, initial){
-            var form_number = $(this).prop('id').match(/\d/)[0];
+            var form_number = $(this).prop('id').match(/\d+/)[0];
             if($(this).val()){
                 var postData = {
                     'produtoId': $(this).val(),
@@ -2566,7 +2562,7 @@ $.Admin.compraForm = {
 
         //Atualiza valor total por item e adicionais totais
         $(document).on('load change keyup paste', 'input[id$=-quantidade],input[id$=-valor_unit],select[id$=-tipo_desconto],input[id$=-desconto]', function(){
-            var form_number = $(this).prop('id').match(/\d/)[0];
+            var form_number = $(this).prop('id').match(/\d+/)[0];
             _this.setItensFields(form_number);
             _this.setAdicionaisTotal();
             $('#id_desconto').change();
@@ -3053,14 +3049,14 @@ $.Admin.movimentoEstoqueForm = {
         
         //Preencher campos iniciais dos itens com 0,00
         $('.formset[id^=itens_form-]').each(function(){
-            var form_number = $(this).prop('id').match(/\d/)[0];
+            var form_number = $(this).prop('id').match(/\d+/)[0];
             if($(this).find('select[id$=-produto]').val().length === 0){
                 _this.setInitialItensData($(this));
             }
         });
 
         produtos_input.on('change', function(event, initial){
-            var form_number = $(this).prop('id').match(/\d/)[0];
+            var form_number = $(this).prop('id').match(/\d+/)[0];
             if($(this).val()){
                 var postData = {
                     'produtoId': $(this).val(),
@@ -3105,7 +3101,7 @@ $.Admin.movimentoEstoqueForm = {
 
         //Atualiza valor total por item e adicionais totais
         $(document).on('load change keyup paste', 'input[id$=-quantidade],input[id$=-valor_unit]', function(){
-            var form_number = $(this).prop('id').match(/\d/)[0];
+            var form_number = $(this).prop('id').match(/\d+/)[0];
             _this.setItensFields(form_number);
         });
 
@@ -4152,22 +4148,17 @@ $(function () {
     setTimeout(function () { $('.page-loader-wrapper').fadeOut(); }, 50);
 });
 
-
-
-
-
 // SLEEP MILISEC
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 };
 // SELECT2 FORMSET
-var forms_sets = $('div .formset').length
 $('.add-formset').on('click', async function(){
-    forms_sets += 1
+
     await sleep(2)
-    for (var i = 0; i < forms_sets; i++){
-        initializeSelect2Produto($('.select-produto'));
+    for (var i = 0; i < $('div.formset:visible').length + 1; i++){
+        initializeSelect2Produto($('div.formset:visible select.select-produto'));
     }
-    var span_dp = $('div.formset:last span.select2:last')
+    var span_dp = $('div.formset span.select2:last')
     span_dp.remove();
 });

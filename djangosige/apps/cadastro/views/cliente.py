@@ -78,7 +78,6 @@ class EditarClienteView(EditarPessoaView):
         request.POST = req_post
         self.object = self.get_object()
         form_class = self.get_form_class()
-        print(form_class)
         form = form_class(request.POST, request.FILES,
                           prefix='cliente_form', instance=self.object, request=request)
         
