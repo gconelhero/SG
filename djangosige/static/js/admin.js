@@ -1544,14 +1544,19 @@ $.Admin.vendaForm = {
                 $(this).find('input[id$=-tipo_desconto]').val('0');
                 desconto_input.val(vdesconto_aplicado.toString().replace(/\./g,','));
 
-                // SUBTOTAL SÓ ESTÁ ALTERANDO NO FORM_ATUAL::: CÓDIGO DE REPARO!
-                var subtotal = parseFloat(parseFloat(vtotal_s)  - parseFloat(desconto_input.val().replace(/\./g,'').replace(',','.')));
-                $(this).find('input[id$=-subtotal]').val(parseFloat(subtotal).toFixed(2));
-
-
                 frete_input.val(vfrete_aplicado.toString().replace(/\./g,','));
                 despesas_input.val(vdespesas_aplicadas.toString().replace(/\./g,','));
                 seguro_input.val(vseguro_aplicado.toString().replace(/\./g,','));
+
+                 // SUBTOTAL SÓ ESTÁ ALTERANDO NO FORM_ATUAL::: CÓDIGO DE REPARO!
+                 // O CÁLCULO DOS TOTAIS DO RATEIO ESTAVA SENDO EXECUTADO APENAS NO FORMSET ATUAL
+                 var subtotal = parseFloat((parseFloat(vtotal_s)  - parseFloat(desconto_input.val().replace(',','.')) + parseFloat(frete_input.val().replace(',','.')) + parseFloat(despesas_input.val().replace(',','.')) + parseFloat(seguro_input.val().replace(',','.'))));
+                 var subtotal_sem_desc = parseFloat((parseFloat(vtotal_s) + parseFloat(frete_input.val().replace(',','.')) + parseFloat(despesas_input.val().replace(',','.')) + parseFloat(seguro_input.val().replace(',','.'))));
+                 var total = subtotal + $(this).find('input[id$=-total_impostos]').val()
+                 $(this).find('input[id$=-subtotal]').val(parseFloat(subtotal).toLocaleString('pt-BR'))
+                 $(this).find('input[id$=-total_sem_desconto]').val(parseFloat(subtotal_sem_desc).toLocaleString('pt-BR'))
+                 $(this).find('input[id$=-total_com_impostos]').val(parseFloat(total).toLocaleString('pt-BR'))
+
 
                 if(index == n_produtos - 1){
                     var diferenca = 0;
@@ -1580,6 +1585,8 @@ $.Admin.vendaForm = {
                     }
 
                     desconto_input.change();
+                    $(this).find('input[id$=-subtotal]').change();
+                    console.log("RATEAR")
                 }
             }
         });
@@ -1604,12 +1611,13 @@ $.Admin.vendaForm = {
         var vtotal_impostos = 0;
         var vsubtotal_sem_desconto = 0;
         var vtotal_sem_impostos = 0;
+        console.log("SET")
 
         var vdesconto = parseFloat($(desconto).val().replace(/\./g,'').replace(',','.'));
         var vfrete = parseFloat(frete.val().replace(/\./g,'').replace(',','.'));
         var vdespesas = parseFloat(despesas.val().replace(/\./g,'').replace(',','.'));
         var vseguro = parseFloat(seguro.val().replace(/\./g,'').replace(',','.'));
-
+        
         if(tipo_desconto.val() == '0' && !isNaN(vdesconto)){
             vtotal = parseFloat(parseFloat(vtotal) - parseFloat(vdesconto)).toFixed(2);
         }else if(tipo_desconto.val() == '1' && !isNaN(vdesconto)){
