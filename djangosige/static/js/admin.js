@@ -1545,8 +1545,8 @@ $.Admin.vendaForm = {
                 desconto_input.val(vdesconto_aplicado.toString().replace(/\./g,','));
 
                 // SUBTOTAL SÓ ESTÁ ALTERANDO NO FORM_ATUAL::: CÓDIGO DE REPARO!
-                var subtotal = parseFloat(parseFloat(vtotal_s)  - parseFloat(desconto_input.val().replace(/\./g,'').replace(',','.')).toFixed(2));
-                $(this).find('input[id$=-subtotal]').val(parseFloat(subtotal.toString().replace(/\./g,',')).toFixed(2).replace(/\./g,','))
+                var subtotal = parseFloat(parseFloat(vtotal_s)  - parseFloat(desconto_input.val().replace(/\./g,'').replace(',','.')));
+                $(this).find('input[id$=-subtotal]').val(parseFloat(subtotal).toFixed(2));
 
 
                 frete_input.val(vfrete_aplicado.toString().replace(/\./g,','));

@@ -12,7 +12,7 @@ from djangosige.apps.estoque.models import DEFAULT_LOCAL_ID
 from djangosige.apps.cadastro.models import Fazenda, Produto
 
 import locale
-import select2.fields
+
 locale.setlocale(locale.LC_ALL, '')
 
 STATUS_ORCAMENTO_ESCOLHAS = (
