@@ -147,6 +147,7 @@ class ItensVenda(models.Model):
         else:
             tot_sem_desc = self.get_total_sem_desconto()
             v_desconto = tot_sem_desc * (self.desconto / 100)
+            print(v_desconto)
             return round(v_desconto, decimais)
 
     def format_desconto(self):
@@ -349,10 +350,12 @@ class Venda(models.Model):
 
     def get_valor_desconto_total(self, decimais=2):
         if self.tipo_desconto == '0':
+            
             return round(self.desconto, decimais)
         else:
             tot_sem_desc = self.get_total_sem_desconto()
             v_desconto = tot_sem_desc * (self.desconto / 100)
+            
             return round(v_desconto, decimais)
 
     def format_valor_total(self):
@@ -386,8 +389,10 @@ class Venda(models.Model):
         return locale.format(u'%.2f', self.despesas, 1)
 
     def format_total_sem_desconto(self):
-        total_sem_desconto = self.valor_total - self.desconto
-        return locale.format(u'%.2f', total_sem_desconto, 1)
+        print("TESTE ",self.valor_total)
+        if self.tipo_desconto == '1':
+            total_sem_desconto = self.valor_total + (self.desconto)
+        return round(total_sem_desconto, 2)
 
     def get_forma_pagamento(self):
         if self.cond_pagamento:

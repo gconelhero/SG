@@ -278,7 +278,7 @@ class ReportVenda:
         seguro = locale.currency(self.venda.seguro, grouping=True)
         despesas = locale.currency(self.venda.despesas, grouping=True)
         if str(self.venda.tipo_desconto) == '1':
-            self.venda.desconto = (self.venda.valor_total / 100) * self.venda.desconto
+            self.venda.desconto = float(self.venda.format_desconto().replace('.','').replace(',','.'))
         desconto = locale.currency(self.venda.desconto, grouping=True)
         impostos = locale.currency(self.venda.impostos, grouping=True)
         total_sem_impostos = locale.currency(self.venda.valor_total - self.venda.impostos, grouping=True)

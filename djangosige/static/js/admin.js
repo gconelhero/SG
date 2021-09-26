@@ -1485,6 +1485,7 @@ $.Admin.vendaForm = {
             total_sem_adicionais = parseFloat(parseFloat(parseFloat(vtot)*100)/parseFloat(100-parseFloat(desconto_total.val().replace(/\./g,'').replace(',','.')))).toFixed(2);
             vdesconto_total = parseFloat(parseFloat(total_sem_adicionais) - parseFloat(vtot)).toFixed(2);
         }
+        
 
         if(isNaN(vdesconto_total)) vdesconto_total = 0;
         if(isNaN(vfrete_total)) vfrete_total = 0;
@@ -1509,10 +1510,11 @@ $.Admin.vendaForm = {
                 var frete_input = $(this).find('input[id$=-valor_rateio_frete]');
                 var despesas_input = $(this).find('input[id$=-valor_rateio_despesas]');
                 var seguro_input = $(this).find('input[id$=-valor_rateio_seguro]');
-
+                
                 var frete_item = frete_input.val().replace(/\./g,'').replace(',','.');
                 var despesas_item = despesas_input.val().replace(/\./g,'').replace(',','.');
                 var seguro_item = seguro_input.val().replace(/\./g,'').replace(',','.');
+
 
                 if(isNaN(vtotal_s)) vtotal_s = '0.00';
                 if(isNaN(frete_item)) frete_item = '0.00';
@@ -1541,6 +1543,11 @@ $.Admin.vendaForm = {
                 //Rateio desconto
                 $(this).find('input[id$=-tipo_desconto]').val('0');
                 desconto_input.val(vdesconto_aplicado.toString().replace(/\./g,','));
+
+                // SUBTOTAL SÓ ESTÁ ALTERANDO NO FORM_ATUAL::: CÓDIGO DE REPARO!
+                var subtotal = parseFloat(parseFloat(vtotal_s)  - parseFloat(desconto_input.val().replace(/\./g,'').replace(',','.')).toFixed(2));
+                $(this).find('input[id$=-subtotal]').val(parseFloat(subtotal.toString().replace(/\./g,',')).toFixed(2).replace(/\./g,','))
+
 
                 frete_input.val(vfrete_aplicado.toString().replace(/\./g,','));
                 despesas_input.val(vdespesas_aplicadas.toString().replace(/\./g,','));
@@ -1674,6 +1681,7 @@ $.Admin.vendaForm = {
             var ipi_bc_icms = form_atual.find('input[id$=-incluir_bc_icms]').is(':checked');
             var ipi_bc_icmsst = form_atual.find('input[id$=-incluir_bc_icmsst]').is(':checked');
             var pmvast = parseFloat(parseFloat(form_atual.find('input[id$=-p_mvast]').val())/100);
+            
 
             //Calculo IPI
             if(tipo_ipi == '0'){
@@ -1817,6 +1825,7 @@ $.Admin.vendaForm = {
             var vimpostos_item = $(this).find('input[id$=-total_impostos]').eq(0).val();
             var vsubtotal_sem_desconto = $(this).find('input[id$=-total_sem_desconto]').eq(0).val().replace(/\./g,'').replace(',','.');
 
+
             if(!isNaN(parseFloat(vfrete_item))){
                 vfrete_total = parseFloat(vfrete_total) + parseFloat(vfrete_item.replace(/\./g,'').replace(',','.'));
                 vsubtotal_sem_desconto = parseFloat(vsubtotal_sem_desconto) - parseFloat(vfrete_item.replace(/\./g,'').replace(',','.'));
@@ -1837,6 +1846,7 @@ $.Admin.vendaForm = {
                 vdesconto = parseFloat(parseFloat($(desconto).val().replace(/\./g,'').replace(',','.'))).toFixed(2);
             }else if(tipo_desconto == '1'){
                 vdesconto = (parseFloat($(desconto).val().replace(/\./g,'').replace(',','.'))/100)*parseFloat(vsubtotal_sem_desconto);
+                
             }
 
             if(!isNaN(vdesconto)){
@@ -2061,7 +2071,7 @@ $.Admin.vendaForm = {
                 var ind_parcela = 1;
                 $('input[id$=-indice_parcela]:visible').each(function(){
                     $(this).val(ind_parcela);
-                    ind_parcela++;
+
                 });
 
                 //Preencher datas de vencimento  das parcelas automaticamente
@@ -2666,7 +2676,7 @@ $.Admin.compraForm = {
         var qtd = form_atual.find('input[id$=-quantidade]');
         var tipo_desconto = form_atual.find('select[id$=-tipo_desconto]');
         var desconto = form_atual.find('input[id$=-desconto]');
-        var subtotal = form_atual.find('input[id$=-subtotal]');
+        var subtotal = $('input[id$=-subtotal]');
         var total_sem_desconto = form_atual.find('input[id$=-total_sem_desconto]');
         var total = form_atual.find('input[id$=-total_com_impostos]');
         var total_impostos = form_atual.find('input[id$=-total_impostos]');
@@ -2675,7 +2685,7 @@ $.Admin.compraForm = {
         var vtotal_impostos = 0;
         var vsubtotal_sem_desconto = 0;
         var vtotal_sem_impostos = 0;
-
+        
         var vdesconto = parseFloat($(desconto).val().replace(/\./g,'').replace(',','.'));
 
         if(tipo_desconto.val() == '0' && !isNaN(vdesconto)){
