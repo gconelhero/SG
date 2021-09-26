@@ -389,10 +389,8 @@ class Venda(models.Model):
         return locale.format(u'%.2f', self.despesas, 1)
 
     def format_total_sem_desconto(self):
-        print("TESTE ",self.valor_total)
-        if self.tipo_desconto == '1':
-            total_sem_desconto = self.valor_total + (self.desconto)
-        return round(total_sem_desconto, 2)
+        total_sem_desconto = self.valor_total - self.desconto
+        return locale.format(u'%.2f', total_sem_desconto, 1)
 
     def get_forma_pagamento(self):
         if self.cond_pagamento:
