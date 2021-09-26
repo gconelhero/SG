@@ -322,6 +322,12 @@ class ReportVenda:
         if self.sem_div == True:
             self.plot.line(0, self.eixo_y, 535, self.eixo_y)
             self.sem_div = False
+        
+        if self.eixo_y < 130:
+            self.new_page()
+        if self.eixo_y <= 220:
+            self.sem_div = True
+
         pagamento = Pagamento.objects.filter(venda_id=self.venda)
         self.plot.setFont(self.title_font_name, self.title_font_size)
         self.eixo_y -= 20
