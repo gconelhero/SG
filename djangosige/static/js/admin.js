@@ -1552,10 +1552,10 @@ $.Admin.vendaForm = {
                  // O CÁLCULO DOS TOTAIS DO RATEIO ESTAVA SENDO EXECUTADO APENAS NO FORMSET ATUAL
                  var subtotal = parseFloat((parseFloat(vtotal_s)  - parseFloat(desconto_input.val().replace(',','.')) + parseFloat(frete_input.val().replace(',','.')) + parseFloat(despesas_input.val().replace(',','.')) + parseFloat(seguro_input.val().replace(',','.'))));
                  var subtotal_sem_desc = parseFloat((parseFloat(vtotal_s) + parseFloat(frete_input.val().replace(',','.')) + parseFloat(despesas_input.val().replace(',','.')) + parseFloat(seguro_input.val().replace(',','.'))));
-                 var total = subtotal + $(this).find('input[id$=-total_impostos]').val()
-                 $(this).find('input[id$=-subtotal]').val(parseFloat(subtotal).toLocaleString('pt-BR'))
-                 $(this).find('input[id$=-total_sem_desconto]').val(parseFloat(subtotal_sem_desc).toLocaleString('pt-BR'))
-                 $(this).find('input[id$=-total_com_impostos]').val(parseFloat(total).toLocaleString('pt-BR'))
+                 var total = subtotal + $(this).find('input[id$=-total_impostos]').val();
+                 $(this).find('input[id$=-subtotal]').val(parseFloat(subtotal).toFixed(2).replace('.',',').toLocaleString('pt-BR'));
+                 $(this).find('input[id$=-total_sem_desconto]').val(parseFloat(subtotal_sem_desc).toFixed(2).replace('.',',').toLocaleString('pt-BR'));
+                 $(this).find('input[id$=-total_com_impostos]').val(parseFloat(total).toFixed(2).replace('.',',').toLocaleString('pt-BR'));
 
 
                 if(index == n_produtos - 1){
