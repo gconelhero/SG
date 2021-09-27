@@ -14,7 +14,7 @@ class setCache(View):
     def post(self, request, *args, **kwargs):
         try:
             set_cache = request.POST['menu_open_close']
-            cache.set('menu_open_close', set_cache, 30)
+            cache.set('menu_open_close', set_cache, 300)
         except Exception as erro:
             set_cache = False
             print("CACHE MENU NÃO SETADO > ", erro)
