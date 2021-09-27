@@ -1,7 +1,30 @@
 if (typeof jQuery === "undefined") {
     throw new Error("Carregar JQuery antes deste arquivo.");
 }
-    
+
+
+$(document).ready(function(){
+    $.Admin.ajaxRequest.ajaxGetRequest('setcache/', cache);
+    function cache(data){
+        if (data[0].menu_open_close == '0'){
+            $('a.close_bar').click()
+        }
+    }
+});
+
+$('a.show_bar').on('click', function(){
+    $('body.theme').attr('class','theme');
+    $('div.navbar-brand').attr('style','margin-left: -15px;');
+    $(this).attr('style','display: none;');
+    $.Admin.ajaxRequest.ajaxPostRequest('setcache/',{'csrfmiddlewaretoken' : $.Admin.cookies.getCookie('csrftoken'), 'menu_open_close':'1'});
+});
+
+$('a.close_bar').on('click', function(){
+    $('body.theme').attr('class','theme ls-closed')
+    $('a.show_bar').attr('style','display: block;')
+    $('div.navbar-brand').attr('style','margin-left: 20px;')
+    $.Admin.ajaxRequest.ajaxPostRequest('setcache/',{'csrfmiddlewaretoken' : $.Admin.cookies.getCookie('csrftoken'), 'menu_open_close':'0'});
+})
 
 $.Admin = {};
 
@@ -4240,27 +4263,3 @@ String.prototype.replaceAll = function(obj) {
     }
     return retStr;
 };
-
-$(document).ready(function(){
-    $.Admin.ajaxRequest.ajaxGetRequest('setcache/', cache);
-    function cache(data){
-        if (data[0].menu_open_close == '0'){
-            $('a.close_bar').click()
-        }
-    }
-});
-
-$('a.show_bar').on('click', function(){
-    $('body.theme').attr('class','theme');
-    $('div.navbar-brand').attr('style','margin-left: -15px;');
-    $(this).attr('style','display: none;');
-    $.Admin.ajaxRequest.ajaxPostRequest('setcache/',{'csrfmiddlewaretoken' : $.Admin.cookies.getCookie('csrftoken'), 'menu_open_close':'1'});
-});
-
-$('a.close_bar').on('click', function(){
-    $('body.theme').attr('class','theme ls-closed')
-    $('a.show_bar').attr('style','display: block;')
-    $('div.navbar-brand').attr('style','margin-left: 20px;')
-    $.Admin.ajaxRequest.ajaxPostRequest('setcache/',{'csrfmiddlewaretoken' : $.Admin.cookies.getCookie('csrftoken'), 'menu_open_close':'0'});
-})
-
