@@ -316,7 +316,6 @@ $.Admin.formset = {
                     //Adicionar form ao manager
                     nFormsets++;
                     $('#id_' + formsetPrefix + '-TOTAL_FORMS').val(nFormsets);
-                    console.log($('#id_' + formsetPrefix + '-TOTAL_FORMS').val(nFormsets))
                 }else{
                     addBtn.show();
                 }
@@ -2224,6 +2223,7 @@ $.Admin.vendaForm = {
             
             if(fazenda_inicial !== false){
                 $('#id_fazenda').val(fazenda_inicial)
+                $('#venda_fazenda').click()
                 fazenda_inicial = false
             }
             
@@ -2251,7 +2251,7 @@ $.Admin.vendaForm = {
             
             for(var i = 0; i < enderecos.length; i++){
                 if ($('#id_endereco').prop('options').length < enderecos.length && select_options_end.includes(enderecos[i].pk) === false){
-                    $('#id_endereco').append($('<option></option>').prop("value",enderecos[i].pk).text(enderecos[i].fields.tipo_endereco));
+                    $('#id_endereco').append($('<option></option>').prop("value",enderecos[i].pk).text(enderecos[i].fields.tipo_endereco.replaceAll({'COM': 'Comercial', 'RES':'Residencial','UNI':'Único','COB': 'Cobrança','ENT':'Entrega','OUT':'Outro'})));
                 }
             }
             
@@ -4152,7 +4152,7 @@ $(function () {
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 };
-// SELECT2 FORMSET
+// SELECT2 FORMSET// SCROLL DOWN ADD FORMSET // SELECT CAMPO PRODUTO
 $('.add-formset').on('click', async function(){
 
     await sleep(2)
@@ -4161,4 +4161,106 @@ $('.add-formset').on('click', async function(){
     }
     var span_dp = $('div.formset span.select2:last')
     span_dp.remove();
+    $('select[id$=-produto]').focus()
+    $('select[id$=-produto]').select()
+    window.scrollTo(0,document.body.scrollHeight);
 });
+
+
+// CHECKBOX DE FAZENDA EM VENDAS/ORÇAMENTOS
+$(document).ready(function(){
+    if ($('#venda_fazenda').not(':checked')) {
+        $('#id_fazenda').hide()
+        $('#add_fazenda').hide()
+        $('div.venda_fazenda').hide()
+        $('label.venda_fazenda').hide()
+
+    }else{
+        $('#id_fazenda').show()
+        $('#add_fazenda').show()
+        $('div.venda_fazenda').show()
+        $('label.venda_fazenda').show()
+    }
+
+})
+
+$('#venda_fazenda').on('click', function(){
+    if ($('#venda_fazenda').is(':checked')) {
+        $('#id_fazenda').show()
+        $('#add_fazenda').show()
+        $('div.venda_fazenda').show()
+        $('label.venda_fazenda').show()
+
+    }else{
+        $('#id_fazenda').hide()
+        $('#add_fazenda').hide()
+        $('div.venda_fazenda').hide()
+        $('label.venda_fazenda').hide()
+        $('select[id$=id_fazenda]').val("")
+    }
+});
+
+// CHECKBOX DE ENDEREÇO EM VENDAS/ORÇAMENTOS
+$(document).ready(function(){
+    if ($('#altera_endereco').is(':checked')) {
+        $('#id_endereco').show()
+        $('#add_endereco').show()
+        $('div.altera_endereco').show()
+        $('label.altera_endereco').show()
+
+    }else{
+        $('#id_endereco').hide()
+        $('#add_endereco').hide()
+        $('div.altera_endereco').hide()
+        $('label.altera_endereco').hide()
+    }
+});
+
+
+$('#altera_endereco').on('click', function(){
+    if ($('#altera_endereco').is(':checked')) {
+        $('#id_endereco').show()
+        $('#add_endereco').show()
+        $('div.altera_endereco').show()
+        $('label.altera_endereco').show()
+
+    }else{
+        $('#id_endereco').hide()
+        $('#add_endereco').hide()
+        $('div.altera_endereco').hide()
+        $('label.altera_endereco').hide()
+    }
+});
+
+// MULTIPLOS REPLACES EXEMPLO: replaceAll({'-':'', ',':'.'})
+String.prototype.replaceAll = function(obj) {
+    var retStr = this;
+    for (var x in obj) {
+        retStr = retStr.replace(x, obj[x]);
+    }
+    return retStr;
+};
+
+$(document).ready(function(){
+    $.Admin.ajaxRequest.ajaxGetRequest('setcache/', cache);
+    function cache(data){
+        if (data[0].menu_open_close == '0'){
+            $('a.close_bar').click()
+        }
+    }
+});
+
+$('a.show_bar').on('click', function(){
+    $('body.theme').attr('class','theme');
+    $('div.navbar-brand').attr('style','margin-left: -15px;');
+    $(this).attr('style','display: none;');
+    $.Admin.ajaxRequest.ajaxPostRequest('setcache/',{'csrfmiddlewaretoken' : $.Admin.cookies.getCookie('csrftoken'), 'menu_open_close':'1'});
+});
+
+$('a.close_bar').on('click', function(){
+    $('body.theme').attr('class','theme ls-closed')
+    $('a.show_bar').attr('style','display: block;')
+    $('div.navbar-brand').attr('style','margin-left: 20px;')
+    $.Admin.ajaxRequest.ajaxPostRequest('setcache/',{'csrfmiddlewaretoken' : $.Admin.cookies.getCookie('csrftoken'), 'menu_open_close':'0'});
+})
+

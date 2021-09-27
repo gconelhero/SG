@@ -128,6 +128,8 @@ class ReportVenda:
             self.plot.drawString(430, self.eixo_y, f"CEP: {self.venda.fazenda.cep}")
             self.eixo_y -= 15
         else:
+            if self.venda.cliente.endereco_padrao.numero == None:
+                self.venda.cliente.endereco_padrao.numero = ""
             self.plot.drawString(6, self.eixo_y, f"Endereço: {self.venda.cliente.endereco_padrao.logradouro}, {self.venda.cliente.endereco_padrao.numero} - {self.venda.cliente.endereco_padrao.bairro}")
             self.eixo_y -= 15
             self.plot.drawString(6, self.eixo_y,f"Cidade: {self.venda.cliente.endereco_padrao.municipio}")
@@ -192,10 +194,10 @@ class ReportVenda:
             subtotal = locale.currency(i.subtotal, grouping=True)
             self.plot.drawString(self.eixo_x, self.eixo_y, str(codigo))
             self.eixo_x += 52
-            if len(descricao) > 30:
+            if len(descricao) > 28:
                 line = simpleSplit(descricao, fontName=self.itens_font_name, 
                                     fontSize=self.itens_font_size, maxWidth=20)
-                if len(' '.join(line[:-1])) < 30:
+                if len(' '.join(line[:-1])) < 28:
                     self.plot.drawString(self.eixo_x, self.eixo_y, str(' '.join(line[:-1])))
                     self.eixo_y -= 10
                     self.plot.drawString(self.eixo_x, self.eixo_y, str(''.join(line[-1])))

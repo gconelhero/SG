@@ -148,17 +148,17 @@
             </div>
             <!-- FAZENDA -->
             {% if form %}
-            <label>Fazenda</label>
+            <label class="venda_fazenda" style="padding-top: 10px;">Fazenda</label>
             {% if form.fazenda.errors %}<label class="error">{% for error in form.fazenda.errors %}{{error}}{% endfor %}</label>{% endif %}
-            <div class="input-group" style="margin-bottom: 0px;">
+            <div class="input-group venda_fazenda" style="margin-bottom: 0px;">
               <div class="form-line">
                 {{form.fazenda}}
               </div>
               <a id='add_fazenda' class="input-group-addon newwindow" style="color: green;" title="Adicionar fazenda" href=""><i class="material-icons add-new-icon" title="Adicionar fazenda">&#xE147;</i></a>
             </div>
-            <label>Endereço</label>
+            <label class="altera_endereco" style="padding-top: 5px;">Endereço</label>
             {% if form.endereco.errors %}<label class="error">{% for error in form.endereco.errors %}{{error}}{% endfor %}</label>{% endif %}
-            <div class="input-group" style="margin-bottom: 0px;">
+            <div class="input-group altera_endereco" style="margin-bottom: 0px;">
               <div class="form-line">
                 {{form.endereco}}
               </div>
@@ -172,7 +172,11 @@
           <div class="form-group">
             <div class="form-line">
               {{form.ind_final}}
-              <label for="id_ind_final" style="font-weight: bold;" title="Selecionar caso o cliente seja o consumidor final.">{{form.ind_final.label}}</label>
+              <label for="id_ind_final" style="font-weight: bold;" title="Selecionar caso o cliente seja o consumidor final.">{{form.ind_final.label}}</label>&nbsp;&nbsp;&nbsp;&nbsp;
+              <input type="checkbox" name="venda_fazenda" class="form-control" id="venda_fazenda">
+              <label for="venda_fazenda" style="font-weight: bold;" title="Selecionar para vincular uma fazenda.">Venda para fazenda?</label>&nbsp;&nbsp;&nbsp;&nbsp;
+              <input type="checkbox" name="altera_endereco" class="form-control" id="altera_endereco">
+              <label for="altera_endereco" style="font-weight: bold;" title="Selecionar para alterar o endereço.">Alterar endereço?</label>
             </div>
           </div>
         </div>

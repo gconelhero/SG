@@ -32,6 +32,7 @@ class InfoCliente(View):
             obj_list += [end for end in enderecos]
         if request.POST['enderecoId'] and enderecos:
             endereco = Endereco.objects.get(pk=request.POST['enderecoId'])
+            pessoa.endereco_padrao = endereco
         
         obj_list.append(cliente)
 

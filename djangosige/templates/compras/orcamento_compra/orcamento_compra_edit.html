@@ -22,7 +22,7 @@
               {% if object.status == '0' %}
               <a id="gerar_pedido_compra" href="{% url 'compras:gerarpedidocompra' object.id %}" class="btn btn-success">GERAR PEDIDO</a>
               <a id="cancelar_orcamento_compra" href="{% url 'compras:cancelarorcamentocompra' object.id %}" class="btn btn-red">CANCELAR</a>
-              <a id="recarrega_option" href="#" class="btn btn-primary" onclick="$.Admin.refreshFormCompra.init(req_refresh);">RECARREGAR</a>
+              <a id="recarrega_option" title="Recarrega os valores inseridos na base de dados durante uma venda/orçamento" href="#" class="btn btn-primary" onclick="$.Admin.refreshFormCompra.init(req_refresh);">RECARREGAR</a>
               {% else %}
               <a id="gerar_copia_orcamento_compra" href="{% url 'compras:copiarorcamentocompra' object.id %}" class="btn btn-primary">GERAR CÓPIA DO ORÇAMENTO</a>
               {% endif %}

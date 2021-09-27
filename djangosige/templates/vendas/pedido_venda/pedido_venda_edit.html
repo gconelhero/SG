@@ -24,7 +24,7 @@
               {% if object.status == '0' or object.status == '3' %}
               <a id="faturar_pedido" href="{% url 'financeiro:faturarpedidovenda' object.id %}" class="btn btn-success">FATURAR PEDIDO</a>
               <a id="cancelar_pedido_venda" href="{% url 'vendas:cancelarpedidovenda' object.id %}" class="btn btn-red">CANCELAR</a>
-              <a id="recarrega_option" href="#" class="btn btn-primary" onclick="$.Admin.refreshForm.init(req_refresh);">RECARREGAR</a>
+              <a id="recarrega_option" title="Recarrega os valores cadastrados durante uma venda/orçamento" href="#" class="btn btn-primary" onclick="$.Admin.refreshForm.init(req_refresh);">RECARREGAR</a>
               {% elif object.status == '1'%}
               <a id="gerar_nota_fiscal" href="{% url 'fiscal:gerarnotafiscalsaida' object.id %}" class="btn btn-success">GERAR NOTA FISCAL</a>
               {% endif %}

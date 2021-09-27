@@ -58,6 +58,7 @@
         <a href="javascript:void(0);" class="bars"></a>
         <div class="navbar-brand">
         <!-- Main icone, data e horario -->
+        <a class="show_bar" style="display: none; margin: 0px;" href="#"><i style="position: absolute; left: 12px; color: white; margin-left: 8px; bottom: 23px;" class="material-icons">&#xE5D2;</i></a>
           <span><a href="{% url 'base:index' %}">SG<b style="color:#e76d64;"> CS</b></a></span>
           <!--<span style="padding-left:30px;">Bem-vindo(a), <strong class="username-strong"></strong></span>-->
           <span style="padding-left:25px;"><i class="material-icons">&#xE8DF;</i></span>
@@ -88,6 +89,8 @@
         <aside id="barralateral" class="sidebar">
             <!-- User Info -->
             <div class="user-info">
+                <!--IMPLEMENTAÇÃO PARA ESCONDER A BARRA LATERAL-->
+                <a class="close_bar" href="#"><i style="position: absolute; right: 12px; color: white;" class="material-icons">&#xE5CD;</i></a>
                 <div class="image">
                     {% if user_foto_sidebar %}
                     <a href="{% url 'login:perfilview' %}"><img src="/media/{{user_foto_sidebar}}" width="48" height="48" alt="User" /></a>
@@ -95,6 +98,7 @@
                     <a href="{% url 'login:perfilview' %}"><img src="/media/imagens/user.png" width="48" height="48" alt="User" /></a>
                     {%endif%}
                 </div>
+                
                 <div class="info-container">
                     <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{request.user.username}} {% if request.user.is_superuser %}(Admin){%endif%}</div>
                     {% if user_empresa %}<div class="email">{{user_empresa}}</div>{% endif %}
@@ -431,7 +435,7 @@
             <!-- Footer -->
             <div class="legal">
                 <div class="copyright">
-                    &copy; 2021 <a href=""> SG CS</a>
+                    &copy; 2021 <a href="{% url 'base:index' %}"> SG CS</a>
                 </div>
                 <div class="version">
                     <b>Versão: </b> {{versao}}
