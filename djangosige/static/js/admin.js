@@ -3054,11 +3054,14 @@ $.Admin.movimentoEstoqueForm = {
             }
         });
 
+        initializeSelect2Produto($('.select-produto'));
+
         produtos_input.on('change', function(event, initial){
             var form_number = $(this).prop('id').match(/\d+/)[0];
             if($(this).val()){
                 var postData = {
                     'produtoId': $(this).val(),
+                    'grupoFiscalId': "",
                 }
                 $.Admin.ajaxRequest.ajaxPostRequest(req_urls['info_produto_url'], postData, _this.handleProdutoInfo, form_number, initial);
             }else{

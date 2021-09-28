@@ -23,12 +23,12 @@
 
         <!-- Body -->
         <div class="body">
-
+          {% csrf_token %}  
           <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row" style="border-bottom: 1px solid #afabab;margin-bottom: 17px;">
               <h4 style="border-bottom: 1px solid #afabab;">Filtrar</h4>
-              <form role="form" action="{% url 'estoque:consultaestoqueview' %}" method="get">
-              {% csrf_token %}
+              <form role="form" action="{% url 'estoque:consultaestoqueview' %}" method="GET">
+              
                 <div class="col-sm-5">
                   <div class="form-group">
                     <div class="form-line">

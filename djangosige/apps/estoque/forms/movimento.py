@@ -119,7 +119,7 @@ class ItensMovimentoForm(forms.ModelForm):
         fields = ('produto', 'quantidade', 'valor_unit', 'subtotal',)
 
         widgets = {
-            'produto': forms.Select(attrs={'class': 'form-control select-produto'}),
+            'produto': forms.Select(attrs={'class': 'form-control select-produto', 'style':'width:250px'}),
             'quantidade': forms.TextInput(attrs={'class': 'form-control decimal-mask'}),
             'valor_unit': forms.TextInput(attrs={'class': 'form-control decimal-mask'}),
             'subtotal': forms.TextInput(attrs={'class': 'form-control decimal-mask', 'readonly': True}),
